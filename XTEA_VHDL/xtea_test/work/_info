@@ -1,0 +1,86 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/jack/VHDL/project/XTEA_VHDL/xtea_test
+Extea_tb
+Z1 w1585063190
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z4 8../xtea_tb.vhd
+Z5 F../xtea_tb.vhd
+l0
+L21
+VB;N5^IZkD5HL^78ZgCVBe3
+!s100 no>[Bc[lGbK@NSa8WR`eK3
+Z6 OV;C;10.5b;63
+32
+Z7 !s110 1585069868
+!i10b 1
+Z8 !s108 1585069868.000000
+Z9 !s90 -reportprogress|300|../xtea_tb.vhd|
+Z10 !s107 ../xtea_tb.vhd|
+!i113 1
+Z11 tExplicit 1 CvgOpt 0
+Atb
+R2
+R3
+DEx4 work 7 xtea_tb 0 22 B;N5^IZkD5HL^78ZgCVBe3
+l81
+L25
+VnT=NZ6QUYcO@LMELCHRVZ0
+!s100 ZFKOWDi8ULA<ZX2gL8IQ@0
+R6
+32
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+Extea_top
+Z12 w1585063432
+Z13 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+R2
+R3
+R0
+Z14 8../xtea_top.vhd
+Z15 F../xtea_top.vhd
+l0
+L23
+Vd2UIW`1=MU@m:35Oo;bO72
+!s100 @=ee]FkMCfC;jTWQ5lP2I3
+R6
+32
+R7
+!i10b 1
+Z16 !s108 1585069867.000000
+Z17 !s90 -reportprogress|300|../xtea_top.vhd|
+Z18 !s107 ../xtea_top.vhd|
+!i113 1
+R11
+Artl
+R13
+R2
+R3
+DEx4 work 8 xtea_top 0 22 d2UIW`1=MU@m:35Oo;bO72
+l94
+L47
+V16<8FFK2d=zGNC8oJLU@h2
+!s100 SMkS^[f<I9;kA[QW_GZdE0
+R6
+32
+R7
+!i10b 1
+R16
+R17
+R18
+!i113 1
+R11
