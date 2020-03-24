@@ -55,16 +55,6 @@ ARCHITECTURE tb OF aes_tb IS
     -- Number of key/data vectors to test
     CONSTANT num_keys           : INTEGER := 3;
 
-    -- Keys to use
-    CONSTANT aes_key_1_const    : STD_LOGIC_VECTOR := x"DEADBEEF0123456789ABCDEFDEADBEEF";
-    CONSTANT aes_key_2_const    : STD_LOGIC_VECTOR := x"73467723465348589734637824782378";
-    CONSTANT aes_key_3_const    : STD_LOGIC_VECTOR := x"ABCDEFABCDEFABCDEFABCDEFABCDEFAB";
-
-    -- Input data to use
-    CONSTANT input_data_1_const : STD_LOGIC_VECTOR := x"A5A5A5A501234567FEDCBA985A5A5A5A";
-    CONSTANT input_data_2_const : STD_LOGIC_VECTOR := x"FEDCBAFEDCBAFEDCBAFEDCBAFEDCBAFE";
-    CONSTANT input_data_3_const : STD_LOGIC_VECTOR := x"46893489237894238964623812300325";
-
     -- Clock and reset signals
     SIGNAL clk                  : STD_LOGIC;
     SIGNAL reset_n              : STD_LOGIC;
@@ -89,9 +79,15 @@ ARCHITECTURE tb OF aes_tb IS
     TYPE key_data_array_t IS ARRAY (0 TO num_keys-1) OF STD_LOGIC_VECTOR(127 DOWNTO 0);
 
     -- Array to hold keys used
-    SIGNAL aes_keys             : key_data_array_t;
+    SIGNAL aes_keys             : key_data_array_t := (0 => x"DEADBEEF0123456789ABCDEFDEADBEEF",
+                                                       1 => x"73467723465348589734637824782378",
+                                                       2 => x"ABCDEFABCDEFABCDEFABCDEFABCDEFAB");
+
     -- Signal to hold data input
-    SIGNAL input_data           : key_data_array_t;
+    SIGNAL input_data           : key_data_array_t := (0 => x"A5A5A5A501234567FEDCBA985A5A5A5A",
+                                                       1 => x"FEDCBAFEDCBAFEDCBAFEDCBAFEDCBAFE",
+                                                       2 => x"46893489237894238964623812300325");
+
     -- Signal to hold encrypted data output
     SIGNAL encrypted_data       : STD_LOGIC_VECTOR(127 DOWNTO 0);
     -- Signal to hold decrypted data output
@@ -157,9 +153,6 @@ BEGIN
         -- Reset input/output storage vectors
         encrypted_data <= (OTHERS => '0');
         decrypted_data <= (OTHERS => '0');
-        -- Set up key and data input arrays
-        aes_keys   <= (0 => aes_key_1_const, 1 => aes_key_2_const, 2 => aes_key_3_const);
-        input_data <= (0 => input_data_1_const, 1 => input_data_2_const, 2 => input_data_3_const);
         -- Main test loop, test all key/data pairs
         FOR i IN 0 TO num_keys-1 LOOP
             -- Write in key, updating data on falling edge of clock to avoid delta cycle issues
