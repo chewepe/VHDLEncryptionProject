@@ -11,7 +11,7 @@ Operation steps:
 First reset the device by setting synchronous active-low reset signal reset_n to '0' for at least 1 clock cycle.
 
 Key expansion:
-1. Begin inputing 128-bit key by setting input key_valid to '1' and key_word_in to the most significant 32 bits of the key.
+1. Begin inputting 128-bit key by setting input key_valid to '1' and key_word_in to the most significant 32 bits of the key.
 2. Repeat on subsequent clock cycles with the next most significant 32 bits of the key.
 3. After all 128 bits have been input set key_word_in back to 0 and key_valid to '0', triggering the beginning of key expansion.
 4. Wait for the output signal key_ready to be set to '1', indicating completion of key expansion.
@@ -36,8 +36,9 @@ ensuring that the result matches the initial plaintext input. These keys and dat
 be added to by increasing the constant num_keys and adding new key/data pairs to the initialiser lists for the aes_keys and input_data signals.
 
 Hardware implementation:
-According to Quartus Prime analysis tools, maximum achievable frequency for the design is 129.47 MHz using a worst-case four corner analysis, which is
-higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 2632 ALMs (adaptive logic modules), 2767 registers and 2304 BRAM bits.
+According to Quartus Prime analysis tools, maximum achievable frequency for the design is 129.75 MHz using a worst-case four corner analysis, which is
+higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 2650 ALMs (adaptive logic modules), 2759 registers and 2304 BRAM bits,
+representing approximately 2% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
 
 General implementation notes:
 This design uses a single key expansion block shared by both the encryption and decryption cores, saving hardware resources. This design also allows

@@ -46,8 +46,8 @@ END ENTITY xtea_top;
 -- Architecture definition
 ARCHITECTURE rtl OF xtea_top IS
 
-    -- Set number of rounds minus two, standard is 64
-    CONSTANT max_round : INTEGER := 62;
+    -- Set number of rounds minus two, standard is 32
+    CONSTANT max_round : INTEGER := 30;
 
     -- Value to modify internal sum by, fixed as per XTEA standard
     CONSTANT delta     : UNSIGNED := UNSIGNED'(x"9E3779B9");
@@ -237,7 +237,7 @@ BEGIN
                         sum <= (OTHERS => '0');
                     ELSE
                         -- Set sum to correct initial value for 64-round decryption
-                        sum <= x"8DDE6E40";
+                        sum <= x"C6EF3720";
                     END IF;
                 ELSIF calc_cntr = 1 THEN
                     -- Perform first subkey calculation

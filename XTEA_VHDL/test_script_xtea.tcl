@@ -16,4 +16,4 @@ vcom ../xtea_tb.vhd;
 vsim work.xtea_tb;
 log -r *;
 add wave *;
-run 21 us;
+run 12 us;
