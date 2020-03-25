@@ -6,6 +6,7 @@ aes_key_expansion.vhd - AES key expansion, used as a component of aes_top.vhd.
 aes_pkg.vhd - Package containing type and constant definitions, needed for all AES components.
 aes_tb.vhd - Testbench for aes_top.vhd which tests several key/data pairs through encryption/decryption.
 test_script_aes.tcl - TCL script to compile AES VHDL code and run testbench.
+aes_top_diagram.png - Diagram showing internal layout of the aes_top block.
 
 Operation steps:
 First reset the device by setting synchronous active-low reset signal reset_n to '0' for at least 1 clock cycle.
