@@ -34,11 +34,13 @@ Testbench operation:
 The provided testbench tests the AES core by encrypting several blocks of data with different keys and decrypting these blocks with the same keys,
 ensuring that the result matches the initial plaintext input. These keys and data blocks are defined by the signals aes_keys and input_data, and can
 be added to by increasing the constant num_keys and adding new key/data pairs to the initialiser lists for the aes_keys and input_data signals.
+The testbench can be run with the provided TCL script using the command vsim -do test_script_aes.tcl
 
 Hardware implementation:
-According to Quartus Prime analysis tools, maximum achievable frequency for the design is 129.75 MHz using a worst-case four corner analysis, which is
-higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 2650 ALMs (adaptive logic modules), 2759 registers and 2304 BRAM bits,
-representing approximately 2% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
+According to Quartus Prime analysis tools, maximum achievable frequency for the design is 133.44 MHz using a worst-case four corner analysis, which is
+higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 2846 ALMs (adaptive logic modules), 3013 registers and 2048 BRAM bits,
+representing approximately 3% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
+A block diagram showing the internal layout of aes_top is provided as aes_top_diagram.png showing the interconnects between the components and ports.
 
 General implementation notes:
 This design uses a single key expansion block shared by both the encryption and decryption cores, saving hardware resources. This design also allows

@@ -29,6 +29,7 @@ The provided testbench tests the XTEA core by encrypting several blocks of data 
 ensuring that the result matches the initial plaintext input. These keys and data blocks are defined by the signals xtea_keys and input_data_array,
 and can be added to by increasing the constant num_keys and adding new key/data pairs to the initialiser lists for the xtea_keys and input_data_array
 signals.
+The testbench can be run with the provided script using the command vsim -do test_script_xtea.tcl
 
 Hardware implementation:
 According to Quartus Prime analysis tools, maximum achievable frequency for the design is 125.6 MHz using a worst-case four corner analysis, which is
@@ -40,3 +41,5 @@ This design operates with a 128-bit block size rather than the standard 64-bit b
 in parallel, encrypting/decrypting one 64-bit block each. This design also operates entirely in simplex, i.e. only allowing either encryption or
 decryption to take place at one time. Several different configurations are possible, such as the addition of two more XTEA cores to allow full duplex
 operation, or the removal of one XTEA core to save space, instead encrypting the 64-bit blocks in serial.
+The correct operation of the encryption mode was also verified by comparing its output to that of a C implementation based on the standard, available at:
+https://github.com/cantora/avr-crypto-lib/blob/master/xtea/xtea.c

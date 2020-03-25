@@ -98,14 +98,23 @@ BEGIN
     input_delay : PROCESS(clk)
     BEGIN
         IF RISING_EDGE(clk) THEN
-            data_word_in_d  <= data_word_in;
-            -- Reverse byte order to match key
-            data_word_in_d2 <= data_word_in_d(7 DOWNTO 0) & data_word_in_d(15 DOWNTO 8) & data_word_in_d(23 DOWNTO 16) & data_word_in_d(31 DOWNTO 24);
-            data_valid_d    <= data_valid;
-            data_valid_d2   <= data_valid_d;
-            get_key_d       <= get_key_int;
-            -- get_key_d should go high the same cycle as the key arrives from key expansion block
-            state_sram_wen  <= get_key_d;
+            IF reset_n = '0' THEN
+                data_word_in_d  <= (OTHERS => '0');
+                data_word_in_d2 <= (OTHERS => '0');
+                data_valid_d    <= '0';
+                data_valid_d2   <= '0';
+                get_key_d       <= '0';
+                state_sram_wen  <= '0';
+            ELSE
+                data_word_in_d  <= data_word_in;
+                -- Reverse byte order to match key
+                data_word_in_d2 <= data_word_in_d(7 DOWNTO 0) & data_word_in_d(15 DOWNTO 8) & data_word_in_d(23 DOWNTO 16) & data_word_in_d(31 DOWNTO 24);
+                data_valid_d    <= data_valid;
+                data_valid_d2   <= data_valid_d;
+                get_key_d       <= get_key_int;
+                -- get_key_d should go high the same cycle as the key arrives from key expansion block
+                state_sram_wen  <= get_key_d;
+            END IF;
         END IF;
     END PROCESS input_delay;
 
@@ -113,15 +122,19 @@ BEGIN
     get_key_flag : PROCESS(clk)
     BEGIN
         IF RISING_EDGE(clk) THEN
-            IF data_valid = '1' THEN
-                -- Flag to get first round key for initial data
-                get_key_int <= '1';
-            ELSIF calc_cntr >= 4 AND calc_cntr <= 7 THEN
-                -- Get subkeys for required computation steps
-                get_key_int <= '1';
-            ELSE
-                -- Unset at all other times
+            IF reset_n = '0' THEN
                 get_key_int <= '0';
+            ELSE
+                IF data_valid = '1' THEN
+                    -- Flag to get first round key for initial data
+                    get_key_int <= '1';
+                ELSIF calc_cntr >= 4 AND calc_cntr <= 7 THEN
+                    -- Get subkeys for required computation steps
+                    get_key_int <= '1';
+                ELSE
+                    -- Unset at all other times
+                    get_key_int <= '0';
+                END IF;
             END IF;
         END IF;
     END PROCESS get_key_flag;
@@ -194,12 +207,17 @@ BEGIN
     sram_read_write : PROCESS(clk)
     BEGIN
         IF RISING_EDGE(clk) THEN
-            IF state_sram_wen = '1' THEN
-                -- Write to correct address in state RAM
-                state_sram(state_sram_waddr) <= state_sram_din;
+            IF reset_n = '0' THEN
+                state_sram_dout <= (OTHERS => '0');
+                state_sram      <= (OTHERS => (OTHERS => '0'));
+            ELSE
+                IF state_sram_wen = '1' THEN
+                    -- Write to correct address in state RAM
+                    state_sram(state_sram_waddr) <= state_sram_din;
+                END IF;
+                -- Read from correct address in state RAM
+                state_sram_dout <= state_sram(state_sram_raddr);
             END IF;
-            -- Read from correct address in state RAM
-            state_sram_dout <= state_sram(state_sram_raddr);
         END IF;
     END PROCESS sram_read_write;
 
@@ -341,77 +359,83 @@ BEGIN
     sub_row_shift_final_round : PROCESS(clk)
     BEGIN
         IF RISING_EDGE(clk) THEN
-            IF calc_cntr = 2 THEN
-                -- Perform first substitution and row shift
-                state_table(0)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
-                state_table(13) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
-                state_table(10) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
-                state_table(7)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
-            ELSIF calc_cntr = 3 THEN
-                -- Perform second substitution and row shift
-                state_table(4)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
-                state_table(1)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
-                state_table(14) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
-                state_table(11) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
-            ELSIF calc_cntr = 4 THEN
-                -- Perform third substitution and row shift
-                state_table(8)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
-                state_table(5)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
-                state_table(2)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
-                state_table(15) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
-            ELSIF calc_cntr = 5 THEN
-                -- Perform fourth substitution and row shift
-                state_table(12) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
-                state_table(9)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
-                state_table(6)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
-                state_table(3)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
-            END IF;
-
-            IF last_round = '1' THEN
-                IF calc_cntr = 6 THEN
-                    -- Perform first XOR for last round
-                    state_table(0)  <= key_word_in(7 DOWNTO 0)   XOR state_table(0);
-                    state_table(1)  <= key_word_in(15 DOWNTO 8)  XOR state_table(1);
-                    state_table(2)  <= key_word_in(23 DOWNTO 16) XOR state_table(2);
-                    state_table(3)  <= key_word_in(31 DOWNTO 24) XOR state_table(3);
-                ELSIF calc_cntr = 7 THEN
-                    -- Perform second XOR for last round
-                    state_table(4)  <= key_word_in(7 DOWNTO 0)   XOR state_table(4);
-                    state_table(5)  <= key_word_in(15 DOWNTO 8)  XOR state_table(5);
-                    state_table(6)  <= key_word_in(23 DOWNTO 16) XOR state_table(6);
-                    state_table(7)  <= key_word_in(31 DOWNTO 24) XOR state_table(7);
-                    -- Output first 32 bits of ciphertext
-                    data_ready      <= '1';
-                    data_word_out   <= state_table(0) & state_table(1) & state_table(2) & state_table(3);
-                ELSIF calc_cntr = 8 THEN
-                    -- Perform third XOR for last round
-                    state_table(8)  <= key_word_in(7 DOWNTO 0)   XOR state_table(8);
-                    state_table(9)  <= key_word_in(15 DOWNTO 8)  XOR state_table(9);
-                    state_table(10) <= key_word_in(23 DOWNTO 16) XOR state_table(10);
-                    state_table(11) <= key_word_in(31 DOWNTO 24) XOR state_table(11);
-                    -- Output second 32 bits of ciphertext
-                    data_ready      <= '1';
-                    data_word_out   <= state_table(4) & state_table(5) & state_table(6) & state_table(7);
-                ELSIF calc_cntr = 9 THEN
-                    -- Perform final XOR for last round
-                    state_table(12) <= key_word_in(7 DOWNTO 0)   XOR state_table(12);
-                    state_table(13) <= key_word_in(15 DOWNTO 8)  XOR state_table(13);
-                    state_table(14) <= key_word_in(23 DOWNTO 16) XOR state_table(14);
-                    state_table(15) <= key_word_in(31 DOWNTO 24) XOR state_table(15);
-                    -- Output third 32 bits of ciphertext
-                    data_ready      <= '1';
-                    data_word_out   <= state_table(8) & state_table(9) & state_table(10) & state_table(11);
-                ELSIF calc_cntr = 10 THEN
-                    -- Output third 32 bits of ciphertext
-                    data_ready      <= '1';
-                    data_word_out   <= state_table(12) & state_table(13) & state_table(14) & state_table(15);
-                ELSE
-                    -- Finished output
-                    data_ready      <= '0';
-                    data_word_out   <= (OTHERS => '0');
-                END IF;
+            IF reset_n = '0' THEN
+                state_table   <= (OTHERS => (OTHERS => '0'));
+                data_ready    <= '0';
+                data_word_out <= (OTHERS => '0');
             ELSE
-                data_ready <= '0';
+                IF calc_cntr = 2 THEN
+                    -- Perform first substitution and row shift
+                    state_table(0)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
+                    state_table(13) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
+                    state_table(10) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
+                    state_table(7)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
+                ELSIF calc_cntr = 3 THEN
+                    -- Perform second substitution and row shift
+                    state_table(4)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
+                    state_table(1)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
+                    state_table(14) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
+                    state_table(11) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
+                ELSIF calc_cntr = 4 THEN
+                    -- Perform third substitution and row shift
+                    state_table(8)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
+                    state_table(5)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
+                    state_table(2)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
+                    state_table(15) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
+                ELSIF calc_cntr = 5 THEN
+                    -- Perform fourth substitution and row shift
+                    state_table(12) <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(7 DOWNTO 0))));
+                    state_table(9)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(15 DOWNTO 8))));
+                    state_table(6)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(23 DOWNTO 16))));
+                    state_table(3)  <= sbox_c(TO_INTEGER(UNSIGNED(state_sram_dout(31 DOWNTO 24))));
+                END IF;
+
+                IF last_round = '1' THEN
+                    IF calc_cntr = 6 THEN
+                        -- Perform first XOR for last round
+                        state_table(0)  <= key_word_in(7 DOWNTO 0)   XOR state_table(0);
+                        state_table(1)  <= key_word_in(15 DOWNTO 8)  XOR state_table(1);
+                        state_table(2)  <= key_word_in(23 DOWNTO 16) XOR state_table(2);
+                        state_table(3)  <= key_word_in(31 DOWNTO 24) XOR state_table(3);
+                    ELSIF calc_cntr = 7 THEN
+                        -- Perform second XOR for last round
+                        state_table(4)  <= key_word_in(7 DOWNTO 0)   XOR state_table(4);
+                        state_table(5)  <= key_word_in(15 DOWNTO 8)  XOR state_table(5);
+                        state_table(6)  <= key_word_in(23 DOWNTO 16) XOR state_table(6);
+                        state_table(7)  <= key_word_in(31 DOWNTO 24) XOR state_table(7);
+                        -- Output first 32 bits of ciphertext
+                        data_ready      <= '1';
+                        data_word_out   <= state_table(0) & state_table(1) & state_table(2) & state_table(3);
+                    ELSIF calc_cntr = 8 THEN
+                        -- Perform third XOR for last round
+                        state_table(8)  <= key_word_in(7 DOWNTO 0)   XOR state_table(8);
+                        state_table(9)  <= key_word_in(15 DOWNTO 8)  XOR state_table(9);
+                        state_table(10) <= key_word_in(23 DOWNTO 16) XOR state_table(10);
+                        state_table(11) <= key_word_in(31 DOWNTO 24) XOR state_table(11);
+                        -- Output second 32 bits of ciphertext
+                        data_ready      <= '1';
+                        data_word_out   <= state_table(4) & state_table(5) & state_table(6) & state_table(7);
+                    ELSIF calc_cntr = 9 THEN
+                        -- Perform final XOR for last round
+                        state_table(12) <= key_word_in(7 DOWNTO 0)   XOR state_table(12);
+                        state_table(13) <= key_word_in(15 DOWNTO 8)  XOR state_table(13);
+                        state_table(14) <= key_word_in(23 DOWNTO 16) XOR state_table(14);
+                        state_table(15) <= key_word_in(31 DOWNTO 24) XOR state_table(15);
+                        -- Output third 32 bits of ciphertext
+                        data_ready      <= '1';
+                        data_word_out   <= state_table(8) & state_table(9) & state_table(10) & state_table(11);
+                    ELSIF calc_cntr = 10 THEN
+                        -- Output third 32 bits of ciphertext
+                        data_ready      <= '1';
+                        data_word_out   <= state_table(12) & state_table(13) & state_table(14) & state_table(15);
+                    ELSE
+                        -- Finished output
+                        data_ready      <= '0';
+                        data_word_out   <= (OTHERS => '0');
+                    END IF;
+                ELSE
+                    data_ready <= '0';
+                END IF;
             END IF;
         END IF;
     END PROCESS sub_row_shift_final_round;
