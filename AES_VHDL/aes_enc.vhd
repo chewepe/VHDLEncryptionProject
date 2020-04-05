@@ -16,17 +16,13 @@
 
 -- Library declarations
 LIBRARY IEEE;
-LIBRARY aes;
+LIBRARY work;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-USE aes.aes_pkg.ALL;
+USE work.aes_pkg.ALL;
 
 -- Entity definition
 ENTITY aes_enc IS
-    GENERIC(
-        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
-        key_length : IN INTEGER RANGE 0 TO 2 := 0
-    );
     PORT(
         -- Clock and active low reset
         clk            : IN  STD_LOGIC;
@@ -36,6 +32,9 @@ ENTITY aes_enc IS
         data_word_in   : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
         -- Flag to enable data input
         data_valid     : IN  STD_LOGIC;
+
+        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
+        key_length     : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
 
         -- Subkey input from key expansion component
         key_word_in    : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -154,7 +153,12 @@ BEGIN
                     get_key_number_temp <= (OTHERS => '0');
                 ELSIF get_key_int = '1' THEN
                     -- Increment whilst key is being requested
-                    get_key_number_temp <= get_key_number_temp + 1;
+                    IF get_key_number_temp < 59 THEN
+                        get_key_number_temp <= get_key_number_temp + 1;
+                    ELSE
+                        -- Wrap around if maximum value reached
+                        get_key_number_temp <= (OTHERS => '0');
+                    END IF;
                 END IF;
             END IF;
         END IF;
@@ -316,9 +320,9 @@ BEGIN
     END PROCESS calc_flag_set;
 
     -- Set max round number for each key length, offset by 1 to account for counter cycle delay
-    max_round <= 8  WHEN key_length = 0 ELSE
-                 10 WHEN key_length = 1 ELSE
-                 12 WHEN key_length = 2 ELSE
+    max_round <= 8  WHEN key_length = "00" ELSE
+                 10 WHEN key_length = "01" ELSE
+                 12 WHEN key_length = "10" ELSE
                  8;
 
     -- Calculation counter management

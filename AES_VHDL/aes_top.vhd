@@ -27,10 +27,6 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 -- Entity definition
 ENTITY aes_top IS
-    GENERIC(
-        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
-        key_length : IN INTEGER RANGE 0 TO 2 := 0
-    );
     PORT(
         -- Clock and active low reset
         clk                 : IN  STD_LOGIC;
@@ -45,6 +41,9 @@ ENTITY aes_top IS
         ciphertext_word_in  : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
         -- Flag to enable ciphertext data input
         ciphertext_valid    : IN  STD_LOGIC;
+
+        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
+        key_length          : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
 
         -- Key input, one 32-bit word at a time
         key_word_in         : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -79,12 +78,10 @@ ARCHITECTURE struct OF aes_top IS
 
     -- Key expansion component
     COMPONENT key_expansion IS
-        GENERIC(
-            key_length : IN INTEGER RANGE 0 TO 2 := 0
-        );
         PORT(
             clk              : IN  STD_LOGIC;
             reset_n          : IN  STD_LOGIC;
+            key_length       : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
             key_word_in      : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             key_valid        : IN  STD_LOGIC;
             get_key_a        : IN  STD_LOGIC;
@@ -99,14 +96,12 @@ ARCHITECTURE struct OF aes_top IS
 
     -- Encryption core component
     COMPONENT aes_enc IS
-        GENERIC(
-            key_length : IN INTEGER RANGE 0 TO 2 := 0
-        );
         PORT(
             clk            : IN  STD_LOGIC;
             reset_n        : IN  STD_LOGIC;
             data_word_in   : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             data_valid     : IN  STD_LOGIC;
+            key_length     : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
             key_word_in    : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             get_key        : OUT STD_LOGIC;
             get_key_number : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -117,14 +112,12 @@ ARCHITECTURE struct OF aes_top IS
 
     -- Decryption core component
     COMPONENT aes_dec IS
-        GENERIC(
-            key_length : IN INTEGER RANGE 0 TO 2 := 0
-        );
         PORT(
             clk            : IN  STD_LOGIC;
             reset_n        : IN  STD_LOGIC;
             data_word_in   : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             data_valid     : IN  STD_LOGIC;
+            key_length     : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
             key_word_in    : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             get_key        : OUT STD_LOGIC;
             get_key_number : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -137,12 +130,10 @@ BEGIN
 
     -- Instantiate key expansion component
     key_exp_inst : key_expansion
-    GENERIC MAP(
-        key_length       => key_length
-    )
     PORT MAP(
         clk              => clk,
         reset_n          => reset_n,
+        key_length       => key_length,
         key_word_in      => key_word_in,
         key_valid        => key_valid,
         get_key_a        => get_key_encryption,
@@ -156,14 +147,12 @@ BEGIN
 
     -- Instantiate AES encryption component
     aes_enc_inst : aes_enc
-    GENERIC MAP(
-        key_length     => key_length
-    )
     PORT MAP(
         clk            => clk,
         reset_n        => reset_n,
         data_word_in   => data_word_in,
         data_valid     => data_valid,
+        key_length     => key_length,
         key_word_in    => subkey_encryption,
         get_key        => get_key_encryption,
         get_key_number => key_number_encryption,
@@ -173,14 +162,12 @@ BEGIN
 
     -- Instantiate AES decryption component
     aes_dec_inst : aes_dec
-    GENERIC MAP(
-        key_length     => key_length
-    )
     PORT MAP(
         clk            => clk,
         reset_n        => reset_n,
         data_word_in   => ciphertext_word_in,
         data_valid     => ciphertext_valid,
+        key_length     => key_length,
         key_word_in    => subkey_decryption,
         get_key        => get_key_decryption,
         get_key_number => key_number_decryption,

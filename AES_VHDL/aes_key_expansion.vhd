@@ -16,21 +16,20 @@
 
 -- Library declarations
 LIBRARY IEEE;
-LIBRARY aes;
+LIBRARY work;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-USE aes.aes_pkg.ALL;
+USE work.aes_pkg.ALL;
 
 -- Entity definition
 ENTITY key_expansion IS
-    GENERIC(
-        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
-        key_length  : IN INTEGER RANGE 0 TO 2 := 0
-    );
     PORT(
         -- Clock and active low reset
         clk              : IN  STD_LOGIC;
         reset_n          : IN  STD_LOGIC;
+
+        -- Length of input key, 0, 1 or 2 for 128, 192 or 256 respectively
+        key_length       : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
 
         -- Key input, one 32-bit word at a time
         key_word_in      : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -79,8 +78,10 @@ ARCHITECTURE rtl OF key_expansion IS
     SIGNAL calc_flag  : STD_LOGIC;
 
     -- Calculation and round counter
-    SIGNAL calc_cntr  : INTEGER;
-    SIGNAL round_cntr : INTEGER;
+    SIGNAL calc_cntr  : INTEGER RANGE 0 TO 21;
+    SIGNAL round_cntr : INTEGER RANGE 0 TO 10;
+    SIGNAL max_round  : INTEGER RANGE 0 TO 9;
+    SIGNAL last_round : STD_LOGIC;
 
     -- SRAM read/write signals
     SIGNAL key_sram_wren        : STD_LOGIC;
@@ -132,14 +133,20 @@ BEGIN
                     -- Write incoming key to first slot in key storage
                     key_sram_wren <= '1';
                 ELSIF (calc_cntr >= 8 AND calc_cntr <= 11) THEN
-                    -- Write subkeys for 128
+                    -- Write subkeys for all key lengths
                     key_sram_wren <= '1';
-                ELSIF (key_length = 1 AND calc_cntr >= 12 AND calc_cntr <= 13) THEN
-                    -- Write extra subkeys for 192
-                    key_sram_wren <= '1';
-                ELSIF (key_length = 2 AND calc_cntr >= 17 AND calc_cntr <= 20) THEN
-                    -- Write extra subkeys for 256
-                    key_sram_wren <= '1';
+                -- Extra subkey writes not needed on last round
+                ELSIF last_round = '0' THEN
+                    IF (key_length = "01" AND calc_cntr >= 12 AND calc_cntr <= 13) THEN
+                        -- Write extra subkeys for 192
+                        key_sram_wren <= '1';
+                    ELSIF (key_length = "10" AND calc_cntr >= 17 AND calc_cntr <= 20) THEN
+                        -- Write extra subkeys for 256
+                        key_sram_wren <= '1';
+                    ELSE
+                        -- No write if conditions not met
+                        key_sram_wren <= '0';
+                    END IF;
                 ELSE
                     -- No write if conditions not met
                     key_sram_wren <= '0';
@@ -179,10 +186,10 @@ BEGIN
                 ELSIF (calc_cntr >= 7 AND calc_cntr <= 10) THEN
                     -- Increment address to output correct subkeys for 128 calculations
                     key_sram_raddr_int <= key_sram_raddr_int + 1;
-                ELSIF (key_length = 1 AND calc_cntr >= 11 AND calc_cntr <= 12) THEN
+                ELSIF (key_length = "01" AND calc_cntr >= 11 AND calc_cntr <= 12) THEN
                     -- Increment address to output correct subkeys for 192 calculations
                     key_sram_raddr_int <= key_sram_raddr_int + 1;
-                ELSIF (key_length = 2 AND calc_cntr >= 16 AND calc_cntr <= 19) THEN
+                ELSIF (key_length = "10" AND calc_cntr >= 16 AND calc_cntr <= 19) THEN
                     -- Increment address to output correct subkeys for 256 calculations
                     key_sram_raddr_int <= key_sram_raddr_int + 1;
                 END IF;
@@ -199,8 +206,8 @@ BEGIN
     -- Switch between external input and calculated value to write to SRAM
     key_sram_din <= key_word_in_d WHEN (key_valid_d = '1') ELSE
                     temp_vector WHEN (calc_cntr >= 9 AND calc_cntr <= 12) ELSE
-                    temp_vector WHEN (key_length = 1 AND calc_cntr >= 13 AND calc_cntr <= 14) ELSE
-                    temp_vector WHEN (key_length = 2 AND calc_cntr >= 18 AND calc_cntr <= 21) ELSE
+                    temp_vector WHEN (key_length = "01" AND calc_cntr >= 13 AND calc_cntr <= 14) ELSE
+                    temp_vector WHEN (key_length = "10" AND calc_cntr >= 18 AND calc_cntr <= 21) ELSE
                     (OTHERS => '0');
 
 
@@ -232,10 +239,10 @@ BEGIN
     --sbox_table <= sbox_c;
 
     -- Asynchronously set index byte for SBOX substitutions
-    sbox_addr <= UNSIGNED(temp_vector(7 DOWNTO 0))   WHEN (calc_cntr = 2 OR (calc_cntr = 12 AND key_length = 2)) else
-                 UNSIGNED(temp_vector(15 DOWNTO 8))  WHEN (calc_cntr = 3 OR (calc_cntr = 13 AND key_length = 2)) else
-                 UNSIGNED(temp_vector(23 DOWNTO 16)) WHEN (calc_cntr = 4 OR (calc_cntr = 14 AND key_length = 2)) else
-                 UNSIGNED(temp_vector(31 DOWNTO 24)) WHEN (calc_cntr = 5 OR (calc_cntr = 15 AND key_length = 2)) else
+    sbox_addr <= UNSIGNED(temp_vector(7 DOWNTO 0))   WHEN (calc_cntr = 2 OR (calc_cntr = 12 AND key_length = "10")) else
+                 UNSIGNED(temp_vector(15 DOWNTO 8))  WHEN (calc_cntr = 3 OR (calc_cntr = 13 AND key_length = "10")) else
+                 UNSIGNED(temp_vector(23 DOWNTO 16)) WHEN (calc_cntr = 4 OR (calc_cntr = 14 AND key_length = "10")) else
+                 UNSIGNED(temp_vector(31 DOWNTO 24)) WHEN (calc_cntr = 5 OR (calc_cntr = 15 AND key_length = "10")) else
                  (OTHERS => '0');
 
     -- Substitute value from SBOX
@@ -263,15 +270,15 @@ BEGIN
                     -- Start calculations
                     calc_flag       <= '1';
                     expansion_done  <= '0';
-                ELSIF key_length = 0 AND round_cntr = 10 THEN
+                ELSIF key_length = "00" AND round_cntr = 10 THEN
                     -- Stop calculation after correct number of rounds for AES-128
                     calc_flag      <= '0';
                     expansion_done <= '1';
-                ELSIF key_length = 1 AND round_cntr = 8 THEN
+                ELSIF key_length = "01" AND round_cntr = 8 THEN
                     -- Stop calculation after correct number of rounds for AES-192
                     calc_flag      <= '0';
                     expansion_done <= '1';
-                ELSIF key_length = 2 AND round_cntr = 7 THEN
+                ELSIF key_length = "10" AND round_cntr = 7 THEN
                     -- Stop calculation after correct number of rounds for AES-256
                     calc_flag      <= '0';
                     expansion_done <= '1';
@@ -279,6 +286,12 @@ BEGIN
             END IF;
         END IF;
     END PROCESS calc_flag_sequence;
+
+    -- Set max round number for each key length, offset by 1 to account for counter cycle delay
+    max_round <= 8 WHEN key_length = "00" ELSE
+                 6 WHEN key_length = "01" ELSE
+                 5 WHEN key_length = "10" ELSE
+                 8;
 
     -- Manage calculation and round counters
     calc_round_counters : PROCESS(clk)
@@ -288,29 +301,45 @@ BEGIN
                 -- Reset counters
                 calc_cntr  <= 0;
                 round_cntr <= 0;
+                -- Reset flag
+                last_round <= '0';
             ELSE
                 IF key_valid = '0' AND key_valid_d = '1' THEN
                     -- Reset counters at beginning of calculation
                     calc_cntr  <= 0;
                     round_cntr <= 0;
-                ELSIF key_length = 0 AND calc_cntr = 12 THEN
+                ELSIF key_length = "00" AND calc_cntr = 12 THEN
                     -- Increment round counter for AES-128
                     calc_cntr  <= 0;
                     round_cntr <= round_cntr + 1;
-                ELSIF key_length = 1 AND calc_cntr = 14 THEN
+                    IF round_cntr = max_round THEN
+                        -- Indicate final round reached
+                        last_round <= '1';
+                    END IF;
+                ELSIF key_length = "01" AND calc_cntr = 14 THEN
                     -- Increment round counter for AES-192
                     calc_cntr  <= 0;
                     round_cntr <= round_cntr + 1;
-                ELSIF key_length = 2 AND calc_cntr = 21 THEN
+                    IF round_cntr = max_round THEN
+                        -- Indicate final round reached
+                        last_round <= '1';
+                    END IF;
+                ELSIF key_length = "10" AND calc_cntr = 21 THEN
                     -- Increment round counter for AES-256
                     calc_cntr  <= 0;
                     round_cntr <= round_cntr + 1;
+                    IF round_cntr = max_round THEN
+                        -- Indicate final round reached
+                        last_round <= '1';
+                    END IF;
                 ELSIF calc_flag = '1' THEN
                     -- Increment calculation counter every cycle
                     calc_cntr <= calc_cntr + 1;
                 ELSE
-                    -- Reset counter if calc flag unset
-                    calc_cntr <= 0;
+                    -- Reset counters and flag if calc flag unset
+                    calc_cntr  <= 0;
+                    round_cntr <= 0;
+                    last_round <= '0';
                 END IF;
             END IF;
         END IF;
@@ -344,13 +373,13 @@ BEGIN
                     temp_vector <= temp_vector XOR key_sram_dout_a;
                 
                 -- Values for AES-192
-                ELSIF key_length = 1 THEN
+                ELSIF key_length = "01" THEN
                     IF calc_cntr >= 12 AND calc_cntr <= 13 THEN
                         temp_vector <= temp_vector XOR key_sram_dout_a;
                     END IF;
 
                 -- Values for AES-256
-                ELSIF key_length = 2 THEN
+                ELSIF key_length = "10" THEN
                     -- Sub bytes steps
                     IF calc_cntr = 13 THEN
                         temp_vector(7 DOWNTO 0) <= sub_byte;

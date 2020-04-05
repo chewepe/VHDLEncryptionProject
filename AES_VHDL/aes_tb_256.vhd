@@ -29,11 +29,11 @@ ARCHITECTURE tb OF aes_tb IS
         PORT(
             clk                 : IN  STD_LOGIC;
             reset_n             : IN  STD_LOGIC;
-            key_length          : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
             data_word_in        : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             data_valid          : IN  STD_LOGIC;
             ciphertext_word_in  : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             ciphertext_valid    : IN  STD_LOGIC;
+            key_length          : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
             key_word_in         : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
             key_valid           : IN  STD_LOGIC;
             key_ready           : OUT STD_LOGIC;
@@ -44,8 +44,8 @@ ARCHITECTURE tb OF aes_tb IS
         );
     END COMPONENT aes_top;
 
-    -- Key length to use - currently 128 bit
-    CONSTANT key_length_const   : STD_LOGIC_VECTOR := "00";
+    -- Key length to use - currently 256 bit
+    CONSTANT key_length_const   : STD_LOGIC_VECTOR := "10";
 
     -- Clock period constant
     CONSTANT clk_period         : TIME    := 10 ns;
@@ -74,17 +74,18 @@ ARCHITECTURE tb OF aes_tb IS
     SIGNAL plaintext_out_data   : STD_LOGIC_VECTOR(31 DOWNTO 0);
     SIGNAL plaintext_out_flag   : STD_LOGIC;
 
-    TYPE key_data_array_t IS ARRAY (0 TO num_keys-1) OF STD_LOGIC_VECTOR(127 DOWNTO 0);
+    TYPE key_array_t IS ARRAY (0 TO num_keys-1) OF STD_LOGIC_VECTOR(255 DOWNTO 0);
+    TYPE data_array_t IS ARRAY (0 TO num_keys-1) OF STD_LOGIC_VECTOR(127 DOWNTO 0);
 
     -- Array to hold keys used
-    SIGNAL aes_keys             : key_data_array_t := (0 => x"DEADBEEF0123456789ABCDEFDEADBEEF",
-                                                       1 => x"73467723465348589734637824782378",
-                                                       2 => x"ABCDEFABCDEFABCDEFABCDEFABCDEFAB");
+    SIGNAL aes_keys             : key_array_t  := (0 => x"DEADBEEF0123456789ABCDEFDEADBEEFDEADBEEFDEADBEEF0123456789ABCDEF",
+                                                   1 => x"73467723465348589734637824782378DEADBEEFDEADBEEF0123456789ABCDEF",
+                                                   2 => x"ABCDEFABCDEFABCDEFABCDEFABCDEFABDEADBEEFDEADBEEF0123456789ABCDEF");
 
     -- Signal to hold data input
-    SIGNAL input_data           : key_data_array_t := (0 => x"A5A5A5A501234567FEDCBA985A5A5A5A",
-                                                       1 => x"FEDCBAFEDCBAFEDCBAFEDCBAFEDCBAFE",
-                                                       2 => x"46893489237894238964623812300325");
+    SIGNAL input_data           : data_array_t := (0 => x"A5A5A5A501234567FEDCBA985A5A5A5A",
+                                                   1 => x"FEDCBAFEDCBAFEDCBAFEDCBAFEDCBAFE",
+                                                   2 => x"46893489237894238964623812300325");
 
     -- Signal to hold encrypted data output
     SIGNAL encrypted_data       : STD_LOGIC_VECTOR(127 DOWNTO 0);
@@ -98,11 +99,11 @@ BEGIN
     PORT MAP(
         clk                 => clk,
         reset_n             => reset_n,
-        key_length          => key_length_const,
         data_word_in        => plaintext_in_data,
         data_valid          => plaintext_in_flag,
         ciphertext_word_in  => ciphertext_in_data,
         ciphertext_valid    => ciphertext_in_flag,
+        key_length          => key_length_const,
         key_word_in         => key_in_data,
         key_valid           => key_in_flag,
         key_ready           => key_ready_flag,
@@ -154,6 +155,14 @@ BEGIN
             -- Write in key, updating data on falling edge of clock to avoid delta cycle issues
             WAIT UNTIL FALLING_EDGE(clk);
             key_in_flag <= '1';
+            key_in_data <= aes_keys(i)(255 DOWNTO 224);
+            WAIT FOR clk_period;
+            key_in_data <= aes_keys(i)(223 DOWNTO 192);
+            WAIT FOR clk_period;
+            key_in_data <= aes_keys(i)(191 DOWNTO 160);
+            WAIT FOR clk_period;
+            key_in_data <= aes_keys(i)(159 DOWNTO 128);
+            WAIT FOR clk_period;
             key_in_data <= aes_keys(i)(127 DOWNTO 96);
             WAIT FOR clk_period;
             key_in_data <= aes_keys(i)(95 DOWNTO 64);
