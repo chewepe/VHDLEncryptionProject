@@ -1,0 +1,201 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/jack/VHDL/GitHub/XTEA_VHDL/duplex/xtea_test
+Extea_dec
+Z1 w1586292909
+Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z5 8../xtea_dec.vhd
+Z6 F../xtea_dec.vhd
+l0
+L7
+VbKGk3QYbe_Q]zQj[gSKF@0
+!s100 5LhF0QRZZQTR[=U79]:JJ0
+Z7 OV;C;10.5b;63
+32
+Z8 !s110 1586293283
+!i10b 1
+Z9 !s108 1586293283.000000
+Z10 !s90 -reportprogress|300|../xtea_dec.vhd|
+Z11 !s107 ../xtea_dec.vhd|
+!i113 1
+Z12 tExplicit 1 CvgOpt 0
+Artl
+R2
+R3
+R4
+DEx4 work 8 xtea_dec 0 22 bKGk3QYbe_Q]zQj[gSKF@0
+l76
+L34
+V2BRkP[lIUj0Q7OB;FZN]_1
+!s100 a`iZ[P4nJ:<C2@Z[BTn6j2
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+Extea_enc
+Z13 w1586292870
+R2
+R3
+R4
+R0
+Z14 8../xtea_enc.vhd
+Z15 F../xtea_enc.vhd
+l0
+L7
+VZNHTgb:BNEB=VObFbBH3^3
+!s100 eMBXJIg1BJdJi7U:=4nzh0
+R7
+32
+R8
+!i10b 1
+R9
+Z16 !s90 -reportprogress|300|../xtea_enc.vhd|
+Z17 !s107 ../xtea_enc.vhd|
+!i113 1
+R12
+Artl
+R2
+R3
+R4
+DEx4 work 8 xtea_enc 0 22 ZNHTgb:BNEB=VObFbBH3^3
+l76
+L34
+V2000JkS5CS258LQoeaZlY2
+!s100 U>Blm1MVWTS`z>S?6;nz82
+R7
+32
+R8
+!i10b 1
+R9
+R16
+R17
+!i113 1
+R12
+Extea_subkey_calc
+Z18 w1586291546
+R2
+R3
+R4
+R0
+Z19 8../xtea_subkey_calc.vhd
+Z20 F../xtea_subkey_calc.vhd
+l0
+L7
+VZSHTIHH=EYK;cH1OdUAYb2
+!s100 3bf^3iI9d<lTCb_nml3b>0
+R7
+32
+R8
+!i10b 1
+R9
+Z21 !s90 -reportprogress|300|../xtea_subkey_calc.vhd|
+Z22 !s107 ../xtea_subkey_calc.vhd|
+!i113 1
+R12
+Artl
+R2
+R3
+R4
+DEx4 work 16 xtea_subkey_calc 0 22 ZSHTIHH=EYK;cH1OdUAYb2
+l76
+L37
+V6NcW<U8HoMXlH[NUR:5H71
+!s100 Y=@n4lbWaQVH_F?4FW^X90
+R7
+32
+R8
+!i10b 1
+R9
+R21
+R22
+!i113 1
+R12
+Extea_tb
+Z23 w1586292234
+R3
+R4
+R0
+Z24 8../xtea_tb.vhd
+Z25 F../xtea_tb.vhd
+l0
+L21
+VB;N5^IZkD5HL^78ZgCVBe3
+!s100 no>[Bc[lGbK@NSa8WR`eK3
+R7
+32
+R8
+!i10b 1
+R9
+Z26 !s90 -reportprogress|300|../xtea_tb.vhd|
+Z27 !s107 ../xtea_tb.vhd|
+!i113 1
+R12
+Atb
+R3
+R4
+DEx4 work 7 xtea_tb 0 22 B;N5^IZkD5HL^78ZgCVBe3
+l90
+L25
+VWVhUXIcE71DzoEDUmRSDf0
+!s100 I3?9[Vem@EPi5@BZ`HYG50
+R7
+32
+R8
+!i10b 1
+R9
+R26
+R27
+!i113 1
+R12
+Extea_top
+Z28 w1586291990
+R3
+R4
+R0
+Z29 8../xtea_top.vhd
+Z30 F../xtea_top.vhd
+l0
+L6
+VPcm;9;Xc25Xh=o3J7>5mS1
+!s100 hSo2Hhm>[64aiE6>i1clj1
+R7
+32
+R8
+!i10b 1
+R9
+Z31 !s90 -reportprogress|300|../xtea_top.vhd|
+Z32 !s107 ../xtea_top.vhd|
+!i113 1
+R12
+Astruct
+R3
+R4
+DEx4 work 8 xtea_top 0 22 Pcm;9;Xc25Xh=o3J7>5mS1
+l100
+L43
+VUGW1aaI_`h@@Nk>BBhhd=0
+!s100 RCg<o^dzFKY8jh0QWWHE73
+R7
+32
+R8
+!i10b 1
+R9
+R31
+R32
+!i113 1
+R12

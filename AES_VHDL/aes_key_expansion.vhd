@@ -2,14 +2,13 @@
 --## Developer: Jack Sampford (j.w.sampford-15@student.lboro.ac.uk)                     ##
 --##                                                                                    ##
 --## Design name: aes                                                                   ##
---## Module name: aes_enc - RTL                                                         ##
+--## Module name: aes_key_expansion - RTL                                               ##
 --## Target devices: ARM MPS2+ FPGA Prototyping Board                                   ##
 --## Tool versions: Quartus Prime 19.1, ModelSim Intel FPGA Starter Edition 10.5b       ##
 --##                                                                                    ##
---## Description: AES encryption core component. Takes plaintext data in and creates    ##
---## ciphertext. Requires connection to key expansion block to provide requested        ##
---## subkeys. Data is read in 32 bits at a time when data_valid flag is set and output  ##
---## 32 bits at a time when encryption complete, marked by data_ready going high.       ##
+--## Description: AES key expansion component. Creates subkeys from initial input key.  ##
+--## Key is input 32 bits at a time on key_word_in whilst setting key_valid high, key   ##
+--## expansion completion is marked by expansion_done going high.                       ##
 --##                                                                                    ##
 --## Dependencies: aes_pkg.vhd                                                          ##
 --########################################################################################

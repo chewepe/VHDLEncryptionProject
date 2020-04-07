@@ -68,7 +68,7 @@ ARCHITECTURE rtl OF xtea_top IS
 
     -- Calculation and round counters
     SIGNAL calc_flag  : STD_LOGIC;
-    SIGNAL calc_cntr  : INTEGER RANGE 0 TO 8;
+    SIGNAL calc_cntr  : INTEGER RANGE 0 TO 7;
     SIGNAL round_cntr : INTEGER RANGE 0 TO max_round+2;
     -- Last round flag
     SIGNAL last_round : STD_LOGIC;
@@ -181,7 +181,7 @@ BEGIN
                 IF key_data_valid_d = '1' AND key_data_valid = '0' THEN
                     -- Begin calculation once data and key loaded
                     calc_flag <= '1';
-                ELSIF calc_cntr = 8 AND last_round = '1' THEN
+                ELSIF calc_cntr = 7 AND last_round = '1' THEN
                     -- Deactivate after last round complete and data output
                     calc_flag <= '0';
                 END IF;
@@ -199,7 +199,7 @@ BEGIN
                 last_round <= '0';
             ELSE
                 IF calc_flag = '1' THEN
-                    IF calc_cntr = 4 AND last_round = '0' THEN
+                    IF calc_cntr = 3 AND last_round = '0' THEN
                         -- All rounds except last end after cycle 4
                         calc_cntr  <= 0;
                         round_cntr <= round_cntr + 1;
@@ -207,7 +207,7 @@ BEGIN
                             -- Indicate final round reached
                             last_round <= '1';
                         END IF;
-                    ELSIF calc_cntr = 8 AND last_round = '1' THEN
+                    ELSIF calc_cntr = 7 AND last_round = '1' THEN
                         -- Last round complete
                         calc_cntr  <= 0;
                         round_cntr <= round_cntr + 1;
@@ -239,7 +239,7 @@ BEGIN
                         -- Set sum to correct initial value for 64-round decryption
                         sum <= x"C6EF3720";
                     END IF;
-                ELSIF calc_cntr = 1 THEN
+                ELSIF calc_cntr = 0 AND calc_flag = '1' THEN
                     -- Perform first subkey calculation
                     IF encryption = '1' THEN
                         -- Perform addition and AND operations to generate subkey
@@ -252,7 +252,7 @@ BEGIN
                         -- Recalculate internal sum variable
                         sum    <= sum - delta;
                     END IF;
-                ELSIF calc_cntr = 3 THEN
+                ELSIF calc_cntr = 2 THEN
                     -- Perform second subkey calculation
                     IF encryption = '1' THEN
                         -- Perform shifting, addition and AND operations to generate subkey
@@ -286,11 +286,11 @@ BEGIN
                     output_word_01 <= data_word_01;
                     output_word_10 <= data_word_10;
                     output_word_11 <= data_word_11;
-                ELSIF calc_cntr = 1 THEN
+                ELSIF calc_cntr = 0 AND calc_flag = '1' THEN
                     -- Set correct input for combinatorial sections
                     comb_input_0 <= STD_LOGIC_VECTOR(output_word_01);
                     comb_input_1 <= STD_LOGIC_VECTOR(output_word_11);
-                ELSIF calc_cntr = 2 THEN
+                ELSIF calc_cntr = 1 THEN
                     -- Add/subtract newly calculated temp value from output values
                     IF encryption = '1' THEN
                         output_word_00 <= output_word_00 + UNSIGNED(comb_out_0);
@@ -299,11 +299,11 @@ BEGIN
                         output_word_00 <= output_word_00 - UNSIGNED(comb_out_0);
                         output_word_10 <= output_word_10 - UNSIGNED(comb_out_1);
                     END IF;
-                ELSIF calc_cntr = 3 THEN
+                ELSIF calc_cntr = 2 THEN
                     -- Set correct input for combinatorial sections
                     comb_input_0 <= STD_LOGIC_VECTOR(output_word_00);
                     comb_input_1 <= STD_LOGIC_VECTOR(output_word_10);
-                ELSIF calc_cntr = 4 THEN
+                ELSIF calc_cntr = 3 THEN
                     -- Add/subtract newly calculated temp value from output values
                     IF encryption = '1' THEN
                         output_word_01 <= output_word_01 + UNSIGNED(comb_out_0);
@@ -318,19 +318,19 @@ BEGIN
                     -- Data written opposite way for decryption, same as data input above
                     IF encryption = '1' THEN
                         -- Output final results
-                        IF calc_cntr = 5 THEN
+                        IF calc_cntr = 4 THEN
                             -- Output first 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_11);
-                        ELSIF calc_cntr = 6 THEN
+                        ELSIF calc_cntr = 5 THEN
                             -- Output second 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_10);
-                        ELSIF calc_cntr = 7 THEN
+                        ELSIF calc_cntr = 6 THEN
                             -- Output third 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_01);
-                        ELSIF calc_cntr = 8 THEN
+                        ELSIF calc_cntr = 7 THEN
                             -- Output final 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_00);
@@ -341,19 +341,19 @@ BEGIN
                         END IF;
                     ELSE
                         -- Output final results
-                        IF calc_cntr = 5 THEN
+                        IF calc_cntr = 4 THEN
                             -- Output first 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_10);
-                        ELSIF calc_cntr = 6 THEN
+                        ELSIF calc_cntr = 5 THEN
                             -- Output second 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_11);
-                        ELSIF calc_cntr = 7 THEN
+                        ELSIF calc_cntr = 6 THEN
                             -- Output third 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_00);
-                        ELSIF calc_cntr = 8 THEN
+                        ELSIF calc_cntr = 7 THEN
                             -- Output final 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_01);
