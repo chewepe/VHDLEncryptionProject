@@ -9,7 +9,7 @@ z2
 cModel Technology
 Z0 d/home/jack/VHDL/GitHub/XTEA_VHDL/duplex/xtea_test
 Extea_dec
-Z1 w1586292909
+Z1 w1586293431
 Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
@@ -17,14 +17,14 @@ R0
 Z5 8../xtea_dec.vhd
 Z6 F../xtea_dec.vhd
 l0
-L7
-VbKGk3QYbe_Q]zQj[gSKF@0
-!s100 5LhF0QRZZQTR[=U79]:JJ0
+L23
+V3M=9eB`>zYMQ8AO46egaX1
+!s100 9:kUJJ_N6jlL7G?J278?i3
 Z7 OV;C;10.5b;63
 32
-Z8 !s110 1586293283
+Z8 !s110 1586369373
 !i10b 1
-Z9 !s108 1586293283.000000
+Z9 !s108 1586369373.000000
 Z10 !s90 -reportprogress|300|../xtea_dec.vhd|
 Z11 !s107 ../xtea_dec.vhd|
 !i113 1
@@ -33,11 +33,11 @@ Artl
 R2
 R3
 R4
-DEx4 work 8 xtea_dec 0 22 bKGk3QYbe_Q]zQj[gSKF@0
-l76
-L34
-V2BRkP[lIUj0Q7OB;FZN]_1
-!s100 a`iZ[P4nJ:<C2@Z[BTn6j2
+DEx4 work 8 xtea_dec 0 22 3M=9eB`>zYMQ8AO46egaX1
+l92
+L50
+VdEVA@NCXS5>J=FdHHiFfM3
+!s100 1^RdmQ]F2[7f@jk6W=gX90
 R7
 32
 R8
@@ -48,7 +48,7 @@ R11
 !i113 1
 R12
 Extea_enc
-Z13 w1586292870
+Z13 w1586293480
 R2
 R3
 R4
@@ -56,9 +56,9 @@ R0
 Z14 8../xtea_enc.vhd
 Z15 F../xtea_enc.vhd
 l0
-L7
-VZNHTgb:BNEB=VObFbBH3^3
-!s100 eMBXJIg1BJdJi7U:=4nzh0
+L23
+VOS8NLLIX8D^XXTPW62Zf73
+!s100 kX=BcoCzXg3PSWhiG4Bie1
 R7
 32
 R8
@@ -72,11 +72,11 @@ Artl
 R2
 R3
 R4
-DEx4 work 8 xtea_enc 0 22 ZNHTgb:BNEB=VObFbBH3^3
-l76
-L34
-V2000JkS5CS258LQoeaZlY2
-!s100 U>Blm1MVWTS`z>S?6;nz82
+DEx4 work 8 xtea_enc 0 22 OS8NLLIX8D^XXTPW62Zf73
+l92
+L50
+VWCJ9A@`a60<?YKfNfiYNZ1
+!s100 f:WF8nLjGQ_a4O9J^eOAD1
 R7
 32
 R8
@@ -87,7 +87,7 @@ R17
 !i113 1
 R12
 Extea_subkey_calc
-Z18 w1586291546
+Z18 w1586293746
 R2
 R3
 R4
@@ -95,9 +95,9 @@ R0
 Z19 8../xtea_subkey_calc.vhd
 Z20 F../xtea_subkey_calc.vhd
 l0
-L7
-VZSHTIHH=EYK;cH1OdUAYb2
-!s100 3bf^3iI9d<lTCb_nml3b>0
+L22
+V@Of:H<Eb^@OOS;z?7<d<Q2
+!s100 E8FA=bP<`n33W7z:Y;SC@0
 R7
 32
 R8
@@ -111,11 +111,11 @@ Artl
 R2
 R3
 R4
-DEx4 work 16 xtea_subkey_calc 0 22 ZSHTIHH=EYK;cH1OdUAYb2
-l76
-L37
-V6NcW<U8HoMXlH[NUR:5H71
-!s100 Y=@n4lbWaQVH_F?4FW^X90
+DEx4 work 16 xtea_subkey_calc 0 22 @Of:H<Eb^@OOS;z?7<d<Q2
+l91
+L52
+V1S[QUV0k6kF8gSlIkd0?C1
+!s100 ^7gjGno=g@BI>M6I=9JCJ3
 R7
 32
 R8
@@ -126,7 +126,7 @@ R22
 !i113 1
 R12
 Extea_tb
-Z23 w1586292234
+Z23 w1586369315
 R3
 R4
 R0
@@ -151,8 +151,8 @@ R4
 DEx4 work 7 xtea_tb 0 22 B;N5^IZkD5HL^78ZgCVBe3
 l90
 L25
-VWVhUXIcE71DzoEDUmRSDf0
-!s100 I3?9[Vem@EPi5@BZ`HYG50
+V^d8JI@SDIM5=89Xd_3`SW1
+!s100 B?j>[Fb:63[d2TjzZFkZ`1
 R7
 32
 R8
@@ -162,34 +162,34 @@ R26
 R27
 !i113 1
 R12
-Extea_top
-Z28 w1586291990
+Extea_top_duplex
+Z28 w1586369365
 R3
 R4
 R0
-Z29 8../xtea_top.vhd
-Z30 F../xtea_top.vhd
+Z29 8../xtea_top_duplex.vhd
+Z30 F../xtea_top_duplex.vhd
 l0
-L6
-VPcm;9;Xc25Xh=o3J7>5mS1
-!s100 hSo2Hhm>[64aiE6>i1clj1
+L29
+Via3W2J`GeLZa?Hn__6o_b3
+!s100 lzen;1N:DE[MSE;Q9DP[g3
 R7
 32
 R8
 !i10b 1
 R9
-Z31 !s90 -reportprogress|300|../xtea_top.vhd|
-Z32 !s107 ../xtea_top.vhd|
+Z31 !s90 -reportprogress|300|../xtea_top_duplex.vhd|
+Z32 !s107 ../xtea_top_duplex.vhd|
 !i113 1
 R12
 Astruct
 R3
 R4
-DEx4 work 8 xtea_top 0 22 Pcm;9;Xc25Xh=o3J7>5mS1
-l100
-L43
-VUGW1aaI_`h@@Nk>BBhhd=0
-!s100 RCg<o^dzFKY8jh0QWWHE73
+DEx4 work 15 xtea_top_duplex 0 22 ia3W2J`GeLZa?Hn__6o_b3
+l123
+L66
+V8_]>dRNPf57F?Sj0n690c1
+!s100 6R4PBg>h6K`d3[SlSzI^72
 R7
 32
 R8

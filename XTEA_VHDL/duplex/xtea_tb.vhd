@@ -25,7 +25,7 @@ END ENTITY xtea_tb;
 ARCHITECTURE tb OF xtea_tb IS
 
     -- XTEA encryption/decryption core component
-    COMPONENT xtea_top IS
+    COMPONENT xtea_top_duplex IS
         PORT(
             clk                 : IN  STD_LOGIC;
             reset_n             : IN  STD_LOGIC;
@@ -41,7 +41,7 @@ ARCHITECTURE tb OF xtea_tb IS
             data_word_out       : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
             data_ready          : OUT STD_LOGIC
         );
-    END COMPONENT xtea_top;
+    END COMPONENT xtea_top_duplex;
 
     -- Clock period constant
     CONSTANT clk_period         : TIME    := 10 ns;
@@ -90,7 +90,7 @@ ARCHITECTURE tb OF xtea_tb IS
 BEGIN
 
     -- Device under test instantiation
-    DUT : xtea_top
+    DUT : xtea_top_duplex
     PORT MAP(
         clk                 => clk,
         reset_n             => reset_n,

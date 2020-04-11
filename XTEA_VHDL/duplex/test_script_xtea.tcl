@@ -10,7 +10,7 @@ vlib work;
 vcom ../xtea_subkey_calc.vhd
 vcom ../xtea_enc.vhd
 vcom ../xtea_dec.vhd
-vcom ../xtea_top.vhd;
+vcom ../xtea_top_duplex.vhd;
 
 # Compile testbench
 vcom ../xtea_tb.vhd;
@@ -19,4 +19,4 @@ vcom ../xtea_tb.vhd;
 vsim work.xtea_tb;
 log -r *;
 add wave *;
-run 12 us;
+run 7 us;

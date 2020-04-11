@@ -2,7 +2,7 @@
 --## Developer: Jack Sampford (j.w.sampford-15@student.lboro.ac.uk)                     ##
 --##                                                                                    ##
 --## Design name: xtea                                                                  ##
---## Module name: xtea_top - RTL                                                        ##
+--## Module name: xtea_top_duplex - RTL                                                 ##
 --## Target devices: ARM MPS2+ FPGA Prototyping Board                                   ##
 --## Tool versions: Quartus Prime 19.1, ModelSim Intel FPGA Starter Edition 10.5b       ##
 --##                                                                                    ##
@@ -26,7 +26,7 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
 -- Entity declaration
-ENTITY xtea_top IS
+ENTITY xtea_top_duplex IS
     PORT(
         -- Clock and active low reset
         clk                 : IN  STD_LOGIC;
@@ -60,10 +60,10 @@ ENTITY xtea_top IS
         -- Flag to indicate the beginning of plaintext output
         data_ready          : OUT STD_LOGIC
     );
-END ENTITY xtea_top;
+END ENTITY xtea_top_duplex;
 
 -- Architecture definition
-ARCHITECTURE struct OF xtea_top IS
+ARCHITECTURE struct OF xtea_top_duplex IS
 
     -- Signals to allow passing of subkeys between key expansion and encryption/decryption cores
     SIGNAL get_key_encryption    : STD_LOGIC;

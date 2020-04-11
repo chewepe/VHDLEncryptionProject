@@ -1,16 +1,44 @@
 Duplex AES (seperate encryption/decryption cores):
 Simulation test:
-Key expansion: 136 clock cycles from assertion of key_in_flag to assertion of key_ready_flag
-Encryption: 104 clock cycles from assertion of plaintext_in_flag to assertion of ciphertext_out_flag
-Decryption: 104 clock cycles from assertion of ciphertext_in_flag to assertion of plaintext_out_flag
+AES-128:
+Key expansion: 136 clock cycles from assertion of key_valid to assertion of key_ready
+Encryption: 104 clock cycles from assertion of data_valid to assertion of ciphertext_ready
+Decryption: 104 clock cycles from assertion of ciphertext_valid to assertion of data_ready
 Total: 240 clock cycles for encryption/decryption with new key, 104 if using previously expanded key
+AES-192:
+Key expansion: 128 clock cycles from assertion of key_valid to assertion of key_ready
+Encryption: 124 clock cycles from assertion of data_valid to assertion of ciphertext_ready
+Decryption: 124 clock cycles from assertion of ciphertext_valid to assertion of data_ready
+Total: 252 clock cycles for encryption/decryption with new key, 124 if using previously expanded key
+AES-256:
+Key expansion: 164 clock cycles from assertion of key_valid to assertion of key_ready
+Encryption: 144 clock cycles from assertion of data_valid to assertion of ciphertext_ready
+Decryption: 144 clock cycles from assertion of ciphertext_valid to assertion of data_ready
+Total: 308 clock cycles for encryption/decryption with new key, 144 if using previously expanded key
 Hardware:
-3013 registers, 2846 ALMs, 2048 BRAM bits, 133.44 MHz maximum frequency from a typical run
+2959 registers, 2863 ALMs, 2048 BRAM bits (SBOX), 143.99 MHz maximum frequency from a typical run
 
 Simplex XTEA (single encryption/decryption core) with no subkey storage:
 Simulation test:
-Encryption: 166 clock cycles from assertion of key_data_in_flag to assertion of output_data_flag
-Decryption: 166 clock cycles from assertion of key_data_in_flag to assertion of output_data_flag
+Encryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
+Decryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
 Note key expansion is redone for every encryption/decryption to reduce area, can be sped up by storing subkeys
 Hardware:
-560 registers, 364 ALMs, 0 BRAM bits, 125.6 MHz maximum frequency from a typical run
+559 registers, 370 ALMs, 0 BRAM bits, 134.79 MHz maximum frequency from a typical run
+
+Duplex XTEA (seperate encryption/decryption cores) with subkey storage:
+Simulation test:
+Key expansion: 69 clock cycles from assertion of key_valid to assertion of key_ready
+Encryption: 70 clock cycles from assertion of data_valid to assertion of ciphertext_ready
+Decryption: 70 clock cycles from assertion of ciphertext_valid to assertion of data_ready
+Total: 139 clock cycles for encryption/decryption with new key, 70 if using previously expanded key
+Hardware:
+3073 registers, 2311 ALMs, 0 BRAM bits, 128.82 MHz maximum frequency from a typical run
+
+
+
+General notes:
+FPGA to use: Cyclone V 5CEBA9F31C8
+Duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
+Simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
+Duplex XTEA without key storage (subkeys calculated in a single cycle, not necessary) may offer best of both.
