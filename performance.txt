@@ -35,10 +35,18 @@ Total: 139 clock cycles for encryption/decryption with new key, 70 if using prev
 Hardware:
 3073 registers, 2311 ALMs, 0 BRAM bits, 128.82 MHz maximum frequency from a typical run
 
+Optimised duplex XTEA (seperate encryption/decryption cores) without subkey storage:
+Simulation test:
+Encryption: 70 clock cycles from assertion of data_valid to assertion of ciphertext_ready
+Decryption: 70 clock cycles from assertion of ciphertext_valid to assertion of data_ready
+Key expansion done in parallel with encryption/decryption on the fly along with other performance optimisations
+Hardware:
+878 registers, 769 ALMs, 0 BRAM bits, 125.64 MHz maximum frequency from a typical run
 
 
 General notes:
-FPGA to use: Cyclone V 5CEBA9F31C8
-Duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
-Simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
-Duplex XTEA without key storage (subkeys calculated in a single cycle, not necessary) may offer best of both.
+- FPGA to use: Cyclone V 5CEBA9F31C8
+- Duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
+- Simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
+- Duplex XTEA without key storage offers best of both; simultaneous encryption/decryption, same speed as with key storage wether new key used or not,
+  much lighter on hardware resources than with key storage.

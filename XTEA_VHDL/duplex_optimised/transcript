@@ -1,0 +1,87 @@
+# do test_script_xtea.tcl
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_subkey_calc_enc.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity xtea_subkey_calc_enc
+# -- Compiling architecture rtl of xtea_subkey_calc_enc
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_subkey_calc_dec.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity xtea_subkey_calc_dec
+# -- Compiling architecture rtl of xtea_subkey_calc_dec
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_enc.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity xtea_enc
+# -- Compiling architecture rtl of xtea_enc
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_dec.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity xtea_dec
+# -- Compiling architecture rtl of xtea_dec
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_top_duplex.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity xtea_top_duplex
+# -- Compiling architecture struct of xtea_top_duplex
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 22:01:12 on Apr 13,2020
+# vcom -reportprogress 300 ../xtea_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity xtea_tb
+# -- Compiling architecture tb of xtea_tb
+# End time: 22:01:12 on Apr 13,2020, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim work.xtea_tb 
+# Start time: 22:01:12 on Apr 13,2020
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading work.xtea_tb(tb)
+# Loading work.xtea_top_duplex(struct)
+# Loading ieee.numeric_std(body)
+# Loading work.xtea_subkey_calc_enc(rtl)
+# Loading work.xtea_subkey_calc_dec(rtl)
+# Loading work.xtea_enc(rtl)
+# Loading work.xtea_dec(rtl)
+# ** Note: NOTE: Key/data pair 1 passed
+#    Time: 1515 ns  Iteration: 0  Instance: /xtea_tb
+# ** Note: NOTE: Key/data pair 2 passed
+#    Time: 2995 ns  Iteration: 0  Instance: /xtea_tb
+# ** Note: NOTE: Key/data pair 3 passed
+#    Time: 4475 ns  Iteration: 0  Instance: /xtea_tb
+# ** Note: NOTE: All tests passed
+#    Time: 4475 ns  Iteration: 0  Instance: /xtea_tb
+# End time: 22:05:26 on Apr 13,2020, Elapsed time: 0:04:14
+# Errors: 0, Warnings: 0
