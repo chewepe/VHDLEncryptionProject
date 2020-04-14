@@ -18,7 +18,7 @@ Total: 308 clock cycles for encryption/decryption with new key, 144 if using pre
 Hardware:
 2959 registers, 2863 ALMs, 2048 BRAM bits (SBOX), 143.99 MHz maximum frequency from a typical run
 
-Simplex XTEA (single encryption/decryption core) with no subkey storage:
+Original simplex XTEA (single encryption/decryption core) with no subkey storage:
 Simulation test:
 Encryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
 Decryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
@@ -26,7 +26,15 @@ Note key expansion is redone for every encryption/decryption to reduce area, can
 Hardware:
 559 registers, 370 ALMs, 0 BRAM bits, 134.79 MHz maximum frequency from a typical run
 
-Duplex XTEA (seperate encryption/decryption cores) with subkey storage:
+Optimised simplex XTEA (single encryption/decryption core) with no subkey storage:
+Simulation test:
+Encryption: 70 clock cycles from assertion of key_data_valid to assertion of data_ready
+Decryption: 70 clock cycles from assertion of key_data_valid to assertion of data_ready
+Note key expansion is redone for every encryption/decryption, does not affect performance
+Hardware:
+433 registers, 367 ALMs, 0 BRAM bits, 124.02 MHz maximum frequency from a typical run
+
+Original duplex XTEA (seperate encryption/decryption cores) with subkey storage:
 Simulation test:
 Key expansion: 69 clock cycles from assertion of key_valid to assertion of key_ready
 Encryption: 70 clock cycles from assertion of data_valid to assertion of ciphertext_ready
@@ -46,7 +54,9 @@ Hardware:
 
 General notes:
 - FPGA to use: Cyclone V 5CEBA9F31C8
-- Duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
-- Simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
-- Duplex XTEA without key storage offers best of both; simultaneous encryption/decryption, same speed as with key storage wether new key used or not,
+- Original duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
+- Original simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
+- Optimised duplex XTEA without key storage offers best of both; simultaneous encryption/decryption, same speed as with key storage wether new key used or not,
   much lighter on hardware resources than with key storage.
+- Optimised simplex XTEA without key storage performs identically to optimised duplex XTEA, tradeoff between ability to run in duplex and hardware resources required.
+- Max. achievable frequencies are slightly lower for optimised algorithms, run to run variance may account for some of this. Likely due to combinatorial section, not a problem.

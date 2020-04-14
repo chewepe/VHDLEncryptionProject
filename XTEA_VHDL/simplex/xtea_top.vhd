@@ -47,49 +47,47 @@ END ENTITY xtea_top;
 ARCHITECTURE rtl OF xtea_top IS
 
     -- Set number of rounds minus two, standard is 32
-    CONSTANT max_round : INTEGER := 30;
+    CONSTANT max_round       : INTEGER := 30;
 
     -- Value to modify internal sum by, fixed as per XTEA standard
-    CONSTANT delta     : UNSIGNED := UNSIGNED'(x"9E3779B9");
+    CONSTANT delta           : UNSIGNED := UNSIGNED'(x"9E3779B9");
 
     -- Delay signal for input flag to allow sequencing of calculation
-    SIGNAL key_data_valid_d : STD_LOGIC;
+    SIGNAL key_data_valid_d  : STD_LOGIC;
 
-    -- Data input signals
-    SIGNAL data_word_00 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL data_word_01 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL data_word_10 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL data_word_11 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL data_cntr    : INTEGER RANGE 0 TO 3;
+    -- Data input counter
+    SIGNAL data_cntr         : INTEGER RANGE 0 TO 3;
 
     -- Key array
     TYPE key_arr IS ARRAY(0 TO 3) OF UNSIGNED(31 DOWNTO 0);
-    SIGNAL key_block : key_arr;
+    SIGNAL key_block         : key_arr;
 
     -- Calculation and round counters
-    SIGNAL calc_flag  : STD_LOGIC;
-    SIGNAL calc_cntr  : INTEGER RANGE 0 TO 7;
-    SIGNAL round_cntr : INTEGER RANGE 0 TO max_round+2;
+    SIGNAL subkey_calc_flag  : STD_LOGIC;
+    SIGNAL subkey_calc_state : STD_LOGIC;
+    SIGNAL calc_flag         : STD_LOGIC;
+    SIGNAL calc_cntr         : INTEGER RANGE 0 TO 5;
+    SIGNAL round_cntr        : INTEGER RANGE 0 TO max_round+2;
     -- Last round flag
-    SIGNAL last_round : STD_LOGIC;
+    SIGNAL last_round        : STD_LOGIC;
 
     -- Subkey calculation signals
-    SIGNAL subkey : UNSIGNED(31 DOWNTO 0);
-    SIGNAL sum    : UNSIGNED(31 DOWNTO 0);
+    SIGNAL subkey            : UNSIGNED(31 DOWNTO 0);
+    SIGNAL sum               : UNSIGNED(31 DOWNTO 0);
 
     -- Output calculation signals
-    SIGNAL output_word_00 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL output_word_01 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL output_word_10 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL output_word_11 : UNSIGNED(31 DOWNTO 0);
-    SIGNAL temp_vector_00 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL temp_vector_01 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL temp_vector_10 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL temp_vector_11 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL comb_input_0   : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL comb_input_1   : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL comb_out_0     : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    SIGNAL comb_out_1     : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL output_word_00    : UNSIGNED(31 DOWNTO 0);
+    SIGNAL output_word_01    : UNSIGNED(31 DOWNTO 0);
+    SIGNAL output_word_10    : UNSIGNED(31 DOWNTO 0);
+    SIGNAL output_word_11    : UNSIGNED(31 DOWNTO 0);
+    SIGNAL temp_vector_00    : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL temp_vector_01    : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL temp_vector_10    : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL temp_vector_11    : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL comb_input_0      : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL comb_input_1      : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL comb_out_0        : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    SIGNAL comb_out_1        : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
 BEGIN
 
@@ -105,83 +103,27 @@ BEGIN
         END IF;
     END PROCESS input_delay;
 
-    -- Load input words and key into 128-bit block
-    data_key_read : PROCESS(clk)
-    BEGIN
-        IF RISING_EDGE(clk) THEN
-            IF reset_n = '0' THEN
-                data_word_00   <= (OTHERS => '0');
-                data_word_01   <= (OTHERS => '0');
-                data_word_10   <= (OTHERS => '0');
-                data_word_11   <= (OTHERS => '0');
-                key_block      <= (OTHERS => (OTHERS => '0'));
-                data_cntr      <= 0;
-            ELSE
-                IF key_data_valid = '1' THEN
-                    IF encryption = '1' THEN
-                        -- Data written opposite way for decryption, i.e.
-                        -- Encryption:
-                        -- 00 <= data(31 DOWNTO 0)
-                        -- 01 <= data(63 DOWNTO 32)
-                        -- 10 <= data(95 DOWNTO 64)
-                        -- 11 <= data(127 DOWNTO 96)
-                        -- Decryption:
-                        -- 00 <= data(63 DOWNTO 32)
-                        -- 01 <= data(31 DOWNTO 0)
-                        -- 10 <= data(127 DOWNTO 96)
-                        -- 11 <= data(95 DOWNTO 64)
-                        IF data_cntr = 0 THEN
-                            data_word_11   <= UNSIGNED(data_word_in);
-                            key_block(3)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 1 THEN
-                            data_word_10   <= UNSIGNED(data_word_in);
-                            key_block(2)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 2 THEN
-                            data_word_01   <= UNSIGNED(data_word_in);
-                            key_block(1)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 3 THEN
-                            data_word_00   <= UNSIGNED(data_word_in);
-                            key_block(0)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= 0;
-                        END IF;
-                    ELSE
-                        IF data_cntr = 0 THEN
-                            data_word_10   <= UNSIGNED(data_word_in);
-                            key_block(3)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 1 THEN
-                            data_word_11   <= UNSIGNED(data_word_in);
-                            key_block(2)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 2 THEN
-                            data_word_00   <= UNSIGNED(data_word_in);
-                            key_block(1)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= data_cntr + 1;
-                        ELSIF data_cntr = 3 THEN
-                            data_word_01   <= UNSIGNED(data_word_in);
-                            key_block(0)   <= UNSIGNED(key_word_in);
-                            data_cntr      <= 0;
-                        END IF;
-                    END IF;
-                END IF;
-            END IF;
-        END IF;
-    END PROCESS data_key_read;
-
     -- Calculation flag management
     calc_flag_set : PROCESS(clk)
     BEGIN
         IF RISING_EDGE(clk) THEN
             IF reset_n = '0' THEN
-                calc_flag <= '0';
+                subkey_calc_flag <= '0';
+                calc_flag        <= '0';
             ELSE
+                IF key_data_valid = '1' AND data_cntr = 3 THEN
+                    -- Begin subkey calculation once key loaded
+                    -- Trigger off of data_cntr to save a clock cycle
+                    subkey_calc_flag <= '1';
+                ELSIF subkey_calc_state = '1' AND last_round = '1' THEN
+                    -- Deactivate after last round complete
+                    subkey_calc_flag <= '0';
+                END IF;
+
                 IF key_data_valid_d = '1' AND key_data_valid = '0' THEN
-                    -- Begin calculation once data and key loaded
+                    -- Begin output calculation once data and key loaded
                     calc_flag <= '1';
-                ELSIF calc_cntr = 7 AND last_round = '1' THEN
+                ELSIF calc_cntr = 5 AND last_round = '1' THEN
                     -- Deactivate after last round complete and data output
                     calc_flag <= '0';
                 END IF;
@@ -194,20 +136,28 @@ BEGIN
     BEGIN
         IF RISING_EDGE(clk) THEN
             IF reset_n = '0' THEN
-                calc_cntr  <= 0;
-                round_cntr <= 0;
-                last_round <= '0';
+                subkey_calc_state <= '0';
+                calc_cntr         <= 0;
+                round_cntr        <= 0;
+                last_round        <= '0';
             ELSE
+                IF subkey_calc_flag = '1' THEN
+                    -- Flip to next state
+                    subkey_calc_state <= NOT(subkey_calc_state);
+                ELSE
+                    subkey_calc_state <= '0';
+                END IF;
+
                 IF calc_flag = '1' THEN
-                    IF calc_cntr = 3 AND last_round = '0' THEN
-                        -- All rounds except last end after cycle 4
+                    IF calc_cntr = 1 AND last_round = '0' THEN
+                        -- All rounds except last end after cycle 2
                         calc_cntr  <= 0;
                         round_cntr <= round_cntr + 1;
                         IF round_cntr = max_round THEN
                             -- Indicate final round reached
                             last_round <= '1';
                         END IF;
-                    ELSIF calc_cntr = 7 AND last_round = '1' THEN
+                    ELSIF calc_cntr = 5 AND last_round = '1' THEN
                         -- Last round complete
                         calc_cntr  <= 0;
                         round_cntr <= round_cntr + 1;
@@ -231,7 +181,9 @@ BEGIN
                 subkey <= (OTHERS => '0');
                 sum    <= (OTHERS => '0');
             ELSE
-                IF key_data_valid_d = '1' AND key_data_valid = '0' THEN
+                IF key_data_valid = '1' AND data_cntr = 3 THEN
+                    -- Reset when new key is being input
+                    -- Same key_cntr optimisation previously described
                     IF encryption = '1' THEN
                         -- Set initial sum value to 0 for encryption
                         sum <= (OTHERS => '0');
@@ -239,7 +191,7 @@ BEGIN
                         -- Set sum to correct initial value for 64-round decryption
                         sum <= x"C6EF3720";
                     END IF;
-                ELSIF calc_cntr = 0 AND calc_flag = '1' THEN
+                ELSIF subkey_calc_state = '0' AND subkey_calc_flag = '1' THEN
                     -- Perform first subkey calculation
                     IF encryption = '1' THEN
                         -- Perform addition and AND operations to generate subkey
@@ -252,7 +204,7 @@ BEGIN
                         -- Recalculate internal sum variable
                         sum    <= sum - delta;
                     END IF;
-                ELSIF calc_cntr = 2 THEN
+                ELSIF subkey_calc_state = '1' THEN
                     -- Perform second subkey calculation
                     IF encryption = '1' THEN
                         -- Perform shifting, addition and AND operations to generate subkey
@@ -275,42 +227,101 @@ BEGIN
                 output_word_01 <= (OTHERS => '0');
                 output_word_10 <= (OTHERS => '0');
                 output_word_11 <= (OTHERS => '0');
+                key_block      <= (OTHERS => (OTHERS => '0'));
+                data_cntr      <= 0;
                 comb_input_0   <= (OTHERS => '0');
                 comb_input_1   <= (OTHERS => '0');
                 data_ready     <= '0';
                 data_word_out  <= (OTHERS => '0');
             ELSE
+                -- Read input data
+                IF key_data_valid = '1' THEN
+                    IF encryption = '1' THEN
+                        -- Data written opposite way for decryption, i.e.
+                        -- Encryption:
+                        -- 00 <= data(31 DOWNTO 0)
+                        -- 01 <= data(63 DOWNTO 32)
+                        -- 10 <= data(95 DOWNTO 64)
+                        -- 11 <= data(127 DOWNTO 96)
+                        -- Decryption:
+                        -- 00 <= data(63 DOWNTO 32)
+                        -- 01 <= data(31 DOWNTO 0)
+                        -- 10 <= data(127 DOWNTO 96)
+                        -- 11 <= data(95 DOWNTO 64)
+                        IF data_cntr = 0 THEN
+                            output_word_11 <= UNSIGNED(data_word_in);
+                            key_block(3)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 1 THEN
+                            output_word_10 <= UNSIGNED(data_word_in);
+                            key_block(2)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 2 THEN
+                            output_word_01 <= UNSIGNED(data_word_in);
+                            key_block(1)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 3 THEN
+                            output_word_00 <= UNSIGNED(data_word_in);
+                            key_block(0)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= 0;
+                        END IF;
+                    ELSE
+                        IF data_cntr = 0 THEN
+                            output_word_10 <= UNSIGNED(data_word_in);
+                            key_block(3)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 1 THEN
+                            output_word_11 <= UNSIGNED(data_word_in);
+                            key_block(2)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 2 THEN
+                            output_word_00 <= UNSIGNED(data_word_in);
+                            key_block(1)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= data_cntr + 1;
+                        ELSIF data_cntr = 3 THEN
+                            output_word_01 <= UNSIGNED(data_word_in);
+                            key_block(0)   <= UNSIGNED(key_word_in);
+                            data_cntr      <= 0;
+                        END IF;
+                    END IF;
+                END IF;
+
+                -- Perform calculations
                 IF key_data_valid_d = '1' AND key_data_valid = '0' THEN
-                    -- Read in new data values
-                    output_word_00 <= data_word_00;
-                    output_word_01 <= data_word_01;
-                    output_word_10 <= data_word_10;
-                    output_word_11 <= data_word_11;
-                ELSIF calc_cntr = 0 AND calc_flag = '1' THEN
-                    -- Set correct input for combinatorial sections
+                    -- Set correct input for combinatorial logic
                     comb_input_0 <= STD_LOGIC_VECTOR(output_word_01);
                     comb_input_1 <= STD_LOGIC_VECTOR(output_word_11);
-                ELSIF calc_cntr = 1 THEN
-                    -- Add/subtract newly calculated temp value from output values
+                ELSIF calc_cntr = 0 AND calc_flag = '1' THEN
                     IF encryption = '1' THEN
+                        -- Add newly calculated temp value to output values
                         output_word_00 <= output_word_00 + UNSIGNED(comb_out_0);
                         output_word_10 <= output_word_10 + UNSIGNED(comb_out_1);
+                        -- Set correct input for combinatorial sections
+                        comb_input_0   <= STD_LOGIC_VECTOR(output_word_00 + UNSIGNED(comb_out_0));
+                        comb_input_1   <= STD_LOGIC_VECTOR(output_word_10 + UNSIGNED(comb_out_1));
                     ELSE
+                        -- Subtract newly calculated temp value from output values
                         output_word_00 <= output_word_00 - UNSIGNED(comb_out_0);
                         output_word_10 <= output_word_10 - UNSIGNED(comb_out_1);
+                        -- Set correct input for combinatorial sections
+                        comb_input_0 <= STD_LOGIC_VECTOR(output_word_00 - UNSIGNED(comb_out_0));
+                        comb_input_1 <= STD_LOGIC_VECTOR(output_word_10 - UNSIGNED(comb_out_1));
                     END IF;
-                ELSIF calc_cntr = 2 THEN
-                    -- Set correct input for combinatorial sections
-                    comb_input_0 <= STD_LOGIC_VECTOR(output_word_00);
-                    comb_input_1 <= STD_LOGIC_VECTOR(output_word_10);
-                ELSIF calc_cntr = 3 THEN
-                    -- Add/subtract newly calculated temp value from output values
+                ELSIF calc_cntr = 1 THEN
                     IF encryption = '1' THEN
+                        -- Add newly calculated temp value to output values
                         output_word_01 <= output_word_01 + UNSIGNED(comb_out_0);
                         output_word_11 <= output_word_11 + UNSIGNED(comb_out_1);
+                        -- Set correct input for combinatorial sections
+                        comb_input_0   <= STD_LOGIC_VECTOR(output_word_01 + UNSIGNED(comb_out_0));
+                        comb_input_1   <= STD_LOGIC_VECTOR(output_word_11 + UNSIGNED(comb_out_1));
                     ELSE
+                        -- Subtract newly calculated temp value from output values
                         output_word_01 <= output_word_01 - UNSIGNED(comb_out_0);
                         output_word_11 <= output_word_11 - UNSIGNED(comb_out_1);
+                        -- Set correct input for combinatorial sections
+                        comb_input_0   <= STD_LOGIC_VECTOR(output_word_01 - UNSIGNED(comb_out_0));
+                        comb_input_1   <= STD_LOGIC_VECTOR(output_word_11 - UNSIGNED(comb_out_1));
                     END IF;
                 END IF;
 
@@ -318,19 +329,19 @@ BEGIN
                     -- Data written opposite way for decryption, same as data input above
                     IF encryption = '1' THEN
                         -- Output final results
-                        IF calc_cntr = 4 THEN
+                        IF calc_cntr = 2 THEN
                             -- Output first 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_11);
-                        ELSIF calc_cntr = 5 THEN
+                        ELSIF calc_cntr = 3 THEN
                             -- Output second 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_10);
-                        ELSIF calc_cntr = 6 THEN
+                        ELSIF calc_cntr = 4 THEN
                             -- Output third 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_01);
-                        ELSIF calc_cntr = 7 THEN
+                        ELSIF calc_cntr = 5 THEN
                             -- Output final 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_00);
@@ -341,19 +352,19 @@ BEGIN
                         END IF;
                     ELSE
                         -- Output final results
-                        IF calc_cntr = 4 THEN
+                        IF calc_cntr = 2 THEN
                             -- Output first 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_10);
-                        ELSIF calc_cntr = 5 THEN
+                        ELSIF calc_cntr = 3 THEN
                             -- Output second 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_11);
-                        ELSIF calc_cntr = 6 THEN
+                        ELSIF calc_cntr = 4 THEN
                             -- Output third 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_00);
-                        ELSIF calc_cntr = 7 THEN
+                        ELSIF calc_cntr = 5 THEN
                             -- Output final 32 bits of data
                             data_ready    <= '1';
                             data_word_out <= STD_LOGIC_VECTOR(output_word_01);

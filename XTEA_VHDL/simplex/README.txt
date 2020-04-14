@@ -32,8 +32,8 @@ signals.
 The testbench can be run with the provided script using the command vsim -do test_script_xtea.tcl
 
 Hardware implementation:
-According to Quartus Prime analysis tools, maximum achievable frequency for the design is 125.6 MHz using a worst-case four corner analysis, which is
-higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 364 ALMs (adaptive logic modules) and 560 registers, representing
+According to Quartus Prime analysis tools, maximum achievable frequency for the design is 124.02 MHz using a worst-case four corner analysis, which is
+higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 367 ALMs (adaptive logic modules) and 433 registers, representing
 less than 1% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
 
 General implementation notes:

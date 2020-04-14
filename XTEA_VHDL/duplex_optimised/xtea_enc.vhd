@@ -55,7 +55,7 @@ ARCHITECTURE rtl OF xtea_enc IS
 
     -- Calculation and round counters
     SIGNAL calc_flag      : STD_LOGIC;
-    SIGNAL calc_cntr      : INTEGER RANGE 0 TO 7;
+    SIGNAL calc_cntr      : INTEGER RANGE 0 TO 5;
     SIGNAL round_cntr     : INTEGER RANGE 0 TO max_round+2;
     -- Last round flag
     SIGNAL last_round     : STD_LOGIC;
