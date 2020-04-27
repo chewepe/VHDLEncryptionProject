@@ -10,6 +10,7 @@ aes_top_diagram.png - Diagram showing internal layout of the aes_top block.
 
 Operation steps:
 First reset the device by setting synchronous active-low reset signal reset_n to '0' for at least 1 clock cycle.
+Key length is selected using input key_length, setting to 00 for 128, 01 for 192 or 10 for 256 bit keys.
 
 Key expansion:
 1. Begin inputting 128-bit key by setting input key_valid to '1' and key_word_in to the most significant 32 bits of the key.
@@ -45,8 +46,6 @@ A block diagram showing the internal layout of aes_top is provided as aes_top_di
 
 General implementation notes:
 This design uses a single key expansion block shared by both the encryption and decryption cores, saving hardware resources. This design also allows
-full duplex operation, i.e. simultaneous encryption and decryption. A simplex design, allowing only either encryption or decryption at one time, is
-possible using a method to allow the encryption core to act as a decryptor by performing some pre-processing on the data, but this would sacrifice
-duplex capabilities and increase processing time for decryption.
+full duplex operation, i.e. simultaneous encryption and decryption.
 The correct operation of the encryption core was also verified by comparing its output to that given by an online AES-128 calculator, available at:
 https://www.cryptool.org/en/cto-highlights/aes

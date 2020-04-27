@@ -20,4 +20,4 @@ vcom -work aes ../aes_tb.vhd;
 vsim aes.aes_tb;
 log -r *;
 add wave *;
-run 12 us;
+run 38 us;

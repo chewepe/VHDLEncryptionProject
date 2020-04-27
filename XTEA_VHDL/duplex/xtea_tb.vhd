@@ -82,6 +82,11 @@ ARCHITECTURE tb OF xtea_tb IS
                                                        1 => x"FEDCBAFEDCBAFEDCBAFEDCBAFEDCBAFE",
                                                        2 => x"46893489237894238964623812300325");
 
+    -- Signal to hold expected encryption outputs
+    SIGNAL encrypted_expected   : key_data_array_t := (0 => x"089975E92555F334CE76E4F24D932AB3",
+                                                       1 => x"07F5110D638D6121F0FC43540AB370B8",
+                                                       2 => x"BC8BD8D9269AC66173B1FF238096EC53");
+
     -- Signal to hold encrypted data output
     SIGNAL encrypted_data       : STD_LOGIC_VECTOR(127 DOWNTO 0);
     -- Signal to hold decrypted data output
@@ -188,6 +193,14 @@ BEGIN
             WAIT FOR clk_period;
             encrypted_data(31 DOWNTO 0)   <= ciphertext_out_data;
             WAIT FOR clk_period;
+            -- Compare encrypted data with expected results
+            IF encrypted_data = encrypted_expected(i) THEN
+                REPORT "NOTE: Key/data pair " & INTEGER'IMAGE(i+1) & " encryption passed" SEVERITY NOTE;
+            ELSE
+                REPORT "ERROR: Key/data pair " & INTEGER'IMAGE(i+1) & " encryption failed" SEVERITY ERROR;
+                fail_flag    := '1';
+                fail_counter := fail_counter + 1;
+            END IF;
             -- Write ciphertext into decrypter, updating data on falling edge of clock
             WAIT UNTIL FALLING_EDGE(clk);
             ciphertext_in_flag <= '1';
@@ -216,9 +229,9 @@ BEGIN
             WAIT FOR clk_period;
             -- Compare decrypted data with original plaintext
             IF decrypted_data = input_data(i) THEN
-                REPORT "NOTE: Key/data pair " & INTEGER'IMAGE(i+1) & " passed" SEVERITY NOTE;
+                REPORT "NOTE: Key/data pair " & INTEGER'IMAGE(i+1) & " decryption passed" SEVERITY NOTE;
             ELSE
-                REPORT "ERROR: Key/data pair " & INTEGER'IMAGE(i+1) & " failed" SEVERITY ERROR;
+                REPORT "ERROR: Key/data pair " & INTEGER'IMAGE(i+1) & " decryption failed" SEVERITY ERROR;
                 fail_flag    := '1';
                 fail_counter := fail_counter + 1;
             END IF;

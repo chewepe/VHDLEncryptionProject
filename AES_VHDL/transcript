@@ -1,6 +1,6 @@
-# do test_script_aes_256.tcl
+# do test_script_aes.tcl
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # vcom -reportprogress 300 -work aes ../aes_pkg.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
@@ -8,10 +8,10 @@
 # -- Compiling package aes_pkg
 # -- Compiling package body aes_pkg
 # -- Loading package aes_pkg
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # vcom -reportprogress 300 -work aes ../aes_key_expansion.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
@@ -20,10 +20,10 @@
 # -- Loading package aes_pkg
 # -- Compiling entity key_expansion
 # -- Compiling architecture rtl of key_expansion
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # vcom -reportprogress 300 -work aes ../aes_enc.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
@@ -32,10 +32,10 @@
 # -- Loading package aes_pkg
 # -- Compiling entity aes_enc
 # -- Compiling architecture rtl of aes_enc
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # vcom -reportprogress 300 -work aes ../aes_dec.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
@@ -44,47 +44,78 @@
 # -- Loading package aes_pkg
 # -- Compiling entity aes_dec
 # -- Compiling architecture rtl of aes_dec
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # vcom -reportprogress 300 -work aes ../aes_top.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
 # -- Loading package std_logic_1164
 # -- Compiling entity aes_top
 # -- Compiling architecture struct of aes_top
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 18:14:00 on Apr 08,2020
-# vcom -reportprogress 300 -work aes ../aes_tb_256.vhd 
+# Start time: 18:35:18 on Apr 27,2020
+# vcom -reportprogress 300 -work aes ../aes_tb.vhd 
 # -- Loading package STANDARD
 # -- Loading package TEXTIO
 # -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
 # -- Compiling entity aes_tb
 # -- Compiling architecture tb of aes_tb
-# End time: 18:14:00 on Apr 08,2020, Elapsed time: 0:00:00
+# End time: 18:35:18 on Apr 27,2020, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vsim aes.aes_tb 
-# Start time: 18:14:00 on Apr 08,2020
+# Start time: 18:35:18 on Apr 27,2020
 # Loading std.standard
 # Loading std.textio(body)
 # Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
 # Loading aes.aes_tb(tb)
 # Loading aes.aes_top(struct)
-# Loading ieee.numeric_std(body)
 # Loading aes.aes_pkg(body)
 # Loading aes.key_expansion(rtl)
 # Loading aes.aes_enc(rtl)
 # Loading aes.aes_dec(rtl)
-# ** Note: NOTE: Key/data pair 1 passed
-#    Time: 4635 ns  Iteration: 0  Instance: /aes_tb
-# ** Note: NOTE: Key/data pair 2 passed
-#    Time: 9235 ns  Iteration: 0  Instance: /aes_tb
-# ** Note: NOTE: Key/data pair 3 passed
-#    Time: 13835 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 0 encryption passed
+#    Time: 2475 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 0 decryption passed
+#    Time: 3555 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 0 encryption passed
+#    Time: 5995 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 0 decryption passed
+#    Time: 7075 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 0 encryption passed
+#    Time: 9515 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 0 decryption passed
+#    Time: 10595 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 1 encryption passed
+#    Time: 13155 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 1 decryption passed
+#    Time: 14435 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 1 encryption passed
+#    Time: 16995 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 1 decryption passed
+#    Time: 18275 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 1 encryption passed
+#    Time: 20835 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 1 decryption passed
+#    Time: 22115 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 2 encryption passed
+#    Time: 25235 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 1 key length 2 decryption passed
+#    Time: 26715 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 2 encryption passed
+#    Time: 29835 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 2 key length 2 decryption passed
+#    Time: 31315 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 2 encryption passed
+#    Time: 34435 ns  Iteration: 0  Instance: /aes_tb
+# ** Note: NOTE: Key/data pair 3 key length 2 decryption passed
+#    Time: 35915 ns  Iteration: 0  Instance: /aes_tb
 # ** Note: NOTE: All tests passed
-#    Time: 13835 ns  Iteration: 0  Instance: /aes_tb
-# End time: 18:15:50 on Apr 08,2020, Elapsed time: 0:01:50
+#    Time: 35915 ns  Iteration: 0  Instance: /aes_tb
+# End time: 18:35:30 on Apr 27,2020, Elapsed time: 0:00:12
 # Errors: 0, Warnings: 0

@@ -31,16 +31,16 @@ void main()
     uint32_t key[4];
     uint32_t output[2];
 
-    input[1] = 0xA5A5A5A5;
-    input[0] = 0x01234567;
+    input[1] = 0x89646238;
+    input[0] = 0x12300325;
     
-    key[3] = 0xDEADBEEF;
-    key[2] = 0x01234567;
-    key[1] = 0x89ABCDEF;
-    key[0] = 0xDEADBEEF;
+    key[3] = 0xABCDEFAB;
+    key[2] = 0xCDEFABCD;
+    key[1] = 0xEFABCDEF;
+    key[0] = 0xABCDEFAB;
 
     xtea_enc((void*)output, (void*)input, (void*)key);
 
-    printf("%08x\n", output[0]);
     printf("%08x\n", output[1]);
+    printf("%08x\n", output[0]);
 }

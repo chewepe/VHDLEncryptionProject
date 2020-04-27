@@ -9,7 +9,7 @@ z2
 cModel Technology
 Z0 d/home/jack/VHDL/GitHub/XTEA_VHDL/simplex/xtea_test
 Extea_tb
-Z1 w1585087803
+Z1 w1588011267
 Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
 R0
@@ -21,9 +21,9 @@ VB;N5^IZkD5HL^78ZgCVBe3
 !s100 no>[Bc[lGbK@NSa8WR`eK3
 Z6 OV;C;10.5b;63
 32
-Z7 !s110 1586894326
+Z7 !s110 1588011276
 !i10b 1
-Z8 !s108 1586894326.000000
+Z8 !s108 1588011276.000000
 Z9 !s90 -reportprogress|300|../xtea_tb.vhd|
 Z10 !s107 ../xtea_tb.vhd|
 !i113 1
@@ -32,10 +32,10 @@ Atb
 R2
 R3
 DEx4 work 7 xtea_tb 0 22 B;N5^IZkD5HL^78ZgCVBe3
-l77
+l82
 L25
-V:GY_ZJ<=3bgU6j5_eDm;i2
-!s100 iazRXOT]@B_O4S2^19<JL1
+Vk3hg6dAD_9H0TOBDG2>2P3
+!s100 Q^mAI_N[QZIRX]e4_HO=h1
 R6
 32
 R7
@@ -59,11 +59,11 @@ Vd2UIW`1=MU@m:35Oo;bO72
 !s100 @=ee]FkMCfC;jTWQ5lP2I3
 R6
 32
-Z16 !s110 1586894325
+R7
 !i10b 1
-Z17 !s108 1586894325.000000
-Z18 !s90 -reportprogress|300|../xtea_top.vhd|
-Z19 !s107 ../xtea_top.vhd|
+R8
+Z16 !s90 -reportprogress|300|../xtea_top.vhd|
+Z17 !s107 ../xtea_top.vhd|
 !i113 1
 R11
 Artl
@@ -77,10 +77,10 @@ VW?4R6<5=0jb9d=f`AQ9:62
 !s100 S1mb^@XUh]h87=e5LXFgH3
 R6
 32
-R16
+R7
 !i10b 1
+R8
+R16
 R17
-R18
-R19
 !i113 1
 R11
