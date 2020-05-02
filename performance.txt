@@ -5,34 +5,49 @@ Key expansion: 136 clock cycles from assertion of key_valid to assertion of key_
 Encryption: 104 clock cycles from assertion of data_valid to assertion of ciphertext_ready
 Decryption: 104 clock cycles from assertion of ciphertext_valid to assertion of data_ready
 Total: 240 clock cycles for encryption/decryption with new key, 104 if using previously expanded key
+Throughput: 177.22 Mbit/s at max achievable freq. 30.77 Mbit/s at 25 MHz
 AES-192:
 Key expansion: 128 clock cycles from assertion of key_valid to assertion of key_ready
 Encryption: 124 clock cycles from assertion of data_valid to assertion of ciphertext_ready
 Decryption: 124 clock cycles from assertion of ciphertext_valid to assertion of data_ready
 Total: 252 clock cycles for encryption/decryption with new key, 124 if using previously expanded key
+Throughput: 148.63 Mbit/s at max achievable freq. 25.81 Mbit/s at 25 MHz
 AES-256:
 Key expansion: 164 clock cycles from assertion of key_valid to assertion of key_ready
 Encryption: 144 clock cycles from assertion of data_valid to assertion of ciphertext_ready
 Decryption: 144 clock cycles from assertion of ciphertext_valid to assertion of data_ready
 Total: 308 clock cycles for encryption/decryption with new key, 144 if using previously expanded key
+Throughput: 127.99 Mbit/s at max achievable freq. 22.22 Mbit/s at 25 MHz
 Hardware:
 2959 registers, 2863 ALMs, 2048 BRAM bits (SBOX), 143.99 MHz maximum frequency from a typical run
+Power estimate of 554.45 mW, 14.19 mW dynamic, 518.81 mW static, 21.46 mW IO at 25 MHz
+
+Actual time (calculated from MAPP testbench using UART message timestamps):
+AES-128: 121.720 us
+AES-192: 123.400 us
+AES-256: 127.200 us
 
 Original simplex XTEA (single encryption/decryption core) with no subkey storage:
 Simulation test:
 Encryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
 Decryption: 134 clock cycles from assertion of key_data_valid to assertion of data_ready
+Throughput: 128.75 Mbit/s at max achievable freq. 23.88 Mbit/s at 25 MHz
 Note key expansion is redone for every encryption/decryption to reduce area, can be sped up by storing subkeys
 Hardware:
 559 registers, 370 ALMs, 0 BRAM bits, 134.79 MHz maximum frequency from a typical run
+Power estimate of 535.54 mW, 2.05 mW dynamic, 518.59 mW static, 14.9 mW IO at 25 MHz
 
 Optimised simplex XTEA (single encryption/decryption core) with no subkey storage:
 Simulation test:
 Encryption: 70 clock cycles from assertion of key_data_valid to assertion of data_ready
 Decryption: 70 clock cycles from assertion of key_data_valid to assertion of data_ready
+Throughput: 226.78 Mbit/s at max achievable freq. 45.71 Mbit/s at 25 MHz
 Note key expansion is redone for every encryption/decryption, does not affect performance
 Hardware:
 433 registers, 367 ALMs, 0 BRAM bits, 124.02 MHz maximum frequency from a typical run
+Power estimate of 535.37 mW, 1.91 mW dynamic, 518.56 mW static, 14.9 mW IO at 25 MHz
+Actual time (calculated from MAPP testbench using UART message timestamps):
+113.920 us
 
 Original duplex XTEA (seperate encryption/decryption cores) with subkey storage:
 Simulation test:
@@ -40,20 +55,26 @@ Key expansion: 69 clock cycles from assertion of key_valid to assertion of key_r
 Encryption: 70 clock cycles from assertion of data_valid to assertion of ciphertext_ready
 Decryption: 70 clock cycles from assertion of ciphertext_valid to assertion of data_ready
 Total: 139 clock cycles for encryption/decryption with new key, 70 if using previously expanded key
+Throughput: 235.56 Mbit/s at max achievable freq. 45.71 Mbit/s at 25 MHz
 Hardware:
 3073 registers, 2311 ALMs, 0 BRAM bits, 128.82 MHz maximum frequency from a typical run
+Power estimate of 553.19 mW, 12.92 mW dynamic, 518.78 mW static, 21.49 mW IO at 25 MHz
 
 Optimised duplex XTEA (seperate encryption/decryption cores) without subkey storage:
 Simulation test:
 Encryption: 70 clock cycles from assertion of data_valid to assertion of ciphertext_ready
 Decryption: 70 clock cycles from assertion of ciphertext_valid to assertion of data_ready
+Throughput: 229.74 Mbit/s at max achievable freq. 45.71 Mbit/s at 25 MHz
 Key expansion done in parallel with encryption/decryption on the fly along with other performance optimisations
 Hardware:
 878 registers, 769 ALMs, 0 BRAM bits, 125.64 MHz maximum frequency from a typical run
-
+Power estimate of 543.36 mW, 3.66 mW dynamic, 518.66 mW static, 21.04 mW IO at 25 MHz
+Actual time (calculated from MAPP testbench using UART message timestamps):
+113.920 us
 
 General notes:
 - FPGA to use: Cyclone V 5CEBA9F31C8
+- MAPP clock speed is 25 MHz
 - Original duplex XTEA much faster when using same key, capable of running at similar Fmax on hardware, capable of performing simultaneous encryption/decryption.
 - Original simplex XTEA slightly faster when using new key every time (probably not common use case), significantly less hardware resources.
 - Optimised duplex XTEA without key storage offers best of both; simultaneous encryption/decryption, same speed as with key storage wether new key used or not,
