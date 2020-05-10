@@ -39,12 +39,14 @@ be added to by increasing the constant num_keys and adding new key/data pairs to
 The testbench can be run with the provided TCL script using the command vsim -do test_script_aes.tcl
 
 Hardware implementation:
-According to Quartus Prime analysis tools, maximum achievable frequency for the design is 133.44 MHz using a worst-case four corner analysis, which is
-higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 2846 ALMs (adaptive logic modules), 3013 registers and 2048 BRAM bits,
-representing approximately 3% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
+According to Quartus Prime analysis tools, maximum achievable frequency for the design is 143.99 MHz using a worst-case four corner analysis.
+The design also uses 2863 ALMs (adaptive logic modules), 2959 registers and 2048 BRAM bits, representing approximately 3% of the available resources
+on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
 A block diagram showing the internal layout of aes_top is provided as aes_top_diagram.png showing the interconnects between the components and ports.
 
 General implementation notes:
+Based on implementation from OpenCores, rewritten to use numeric_std amongst other modifications. Original implementation available from:
+https://opencores.org/projects/aes_128_192_256
 This design uses a single key expansion block shared by both the encryption and decryption cores, saving hardware resources. This design also allows
 full duplex operation, i.e. simultaneous encryption and decryption.
 The correct operation of the encryption core was also verified by comparing its output to that given by an online AES-128 calculator, available at:

@@ -1,0 +1,43 @@
+Folder structure/content:
+|-- AES_VHDL
+|   |-- README.txt
+|   |   |-- Includes breakdown of AES implementation files.
+|   |-- aes_top.vhd
+|   |-- aes_enc.vhd
+|   |-- aes_dec.vhd
+|   |-- aes_key_expansion.vhd
+|   |-- aes_pkg.vhd
+|   |-- aes_tb.vhd
+|   |-- test_script_aes.tcl
+|   |-- aes_top_diagram.png
+|-- XTEA_C
+|   |-- xtea_test.c
+|       |-- C implementation of XTEA, used to verify encryption outputs.
+|-- XTEA_VHDL
+|   |-- duplex
+|   |   |-- README.txt
+|   |   |   |-- Includes breakdown of original duplex implementation files.
+|   |   |-- xtea_top_duplex.vhd
+|   |   |-- xtea_subkey_calc.vhd
+|   |   |-- xtea_enc.vhd
+|   |   |-- xtea_dec.vhd
+|   |   |-- xtea_tb.vhd
+|   |   |-- test_script_xtea.tcl
+|   |-- duplex_optimised
+|   |   |-- README.txt
+|   |   |   |-- Includes breakdown of optimised duplex implementation files.
+|   |   |-- xtea_top_duplex.vhd
+|   |   |-- xtea_subkey_calc_enc.vhd
+|   |   |-- xtea_subkey_calc_dec.vhd
+|   |   |-- xtea_enc.vhd
+|   |   |-- xtea_dec.vhd
+|   |   |-- xtea_tb.vhd
+|   |   |-- test_script_xtea.tcl
+|   |-- simplex
+|       |-- README.txt
+|       |   |-- Includes breakdown of optimised simplex implementation files.
+|       |-- xtea_top.vhd
+|       |-- xtea_tb.vhd
+|       |-- test_script_xtea.tcl
+|-- performance.txt
+    |-- File detailing the performance of each implementation.

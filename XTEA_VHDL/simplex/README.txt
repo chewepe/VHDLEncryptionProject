@@ -32,14 +32,13 @@ signals.
 The testbench can be run with the provided script using the command vsim -do test_script_xtea.tcl
 
 Hardware implementation:
-According to Quartus Prime analysis tools, maximum achievable frequency for the design is 124.02 MHz using a worst-case four corner analysis, which is
-higher than the maximum clock speed of a Cortex M3 (120 MHz). The design also uses 367 ALMs (adaptive logic modules) and 433 registers, representing
-less than 1% of the available resources on the Cyclone V 5CEBA9F31C8 FPGA on the ARM MPS2+ board.
+According to Quartus Prime analysis tools, maximum achievable frequency for the design is 124.02 MHz using a worst-case four corner analysis.
+The design also uses 367 ALMs (adaptive logic modules) and 433 registers, representing less than 1% of the available resources on the Cyclone V
+5CEBA9F31C8 FPGA on the ARM MPS2+ board.
 
 General implementation notes:
 This design operates with a 128-bit block size rather than the standard 64-bit block size typical in XTEA implementations by running two XTEA cores
 in parallel, encrypting/decrypting one 64-bit block each. This design also operates entirely in simplex, i.e. only allowing either encryption or
-decryption to take place at one time. Several different configurations are possible, such as the addition of two more XTEA cores to allow full duplex
-operation, or the removal of one XTEA core to save space, instead encrypting the 64-bit blocks in serial.
+decryption to take place at one time.
 The correct operation of the encryption mode was also verified by comparing its output to that of a C implementation based on the standard, available at:
 https://github.com/cantora/avr-crypto-lib/blob/master/xtea/xtea.c
